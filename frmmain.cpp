@@ -13,7 +13,7 @@ FrmMain::FrmMain(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QString datenbankDatei = "dbBankkonto2.sqlite";
+    QString datenbankDatei = "dbBankkonto.sqlite";
     setWindowTitle("Bankkonto App");
     this->users = new UsersListe(datenbankDatei);
     initialWidgetsState();
