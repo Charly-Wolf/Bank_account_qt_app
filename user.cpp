@@ -13,6 +13,11 @@ User::~User()
 
 }
 
+int User::getId()
+{
+ return this->id;
+}
+
 QString User::getUsername()
 {
     return this->username;
@@ -41,4 +46,9 @@ QString User::toString()
 void User::setPass(QString pass)
 {
     this->pass = pass;
+}
+
+void User::setId(int id)
+{
+    this->id = id;
 }

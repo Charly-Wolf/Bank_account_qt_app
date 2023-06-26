@@ -24,7 +24,18 @@ void KontenListe::kontenZuordnen(QString inhaberUsername) //Giro- von Sparkkonte
                 gesamtSparkontenstand+= alleKonten[i]->getKontostand();
             }
         }
-    }    
+    }
+}
+
+void KontenListe::testKontenAnlegen(QVector<Konto *> testKonten)
+{
+    qDebug() << "alleKonten Size: " << testKonten.size();
+
+    for(Konto* k : testKonten) {
+        girokontoAnlegen(k->getKontostand(), k->getDispo, k->getInhaberUsername(), k->getUserId); //Rückgabewert = KontoNr
+        sparkontoAnlegen(double startKapital, QString inhaberUsername, int userId); //Rückgabewert = KontoNr
+        qDebug() << "alleKonten: " << alleKonten.at(alleKonten.indexOf(k))->getKontoNr();
+    }
 }
 
 int KontenListe::zaehleKonten()
@@ -72,11 +83,14 @@ Sparkonto *KontenListe::sparkontoHolen(int index)
     return tmpKonto;
 }
 
-int KontenListe::girokontoAnlegen(double startKapital, double dispo, QString inhaberUsername)
+int KontenListe::girokontoAnlegen(double startKapital, double dispo, QString inhaberUsername, int userId)
 {
     int anzGirokonten = zaehleGirokonten();
-    int kontoNr = loggedUserGirokonten[anzGirokonten-1]->getKontoNr() + 100;
-    if(startKapital > 0) {
+    int kontoNr = userId * 1000101;
+    if(anzGirokonten > 0) {
+        kontoNr = userId * 1000000 + (loggedUserGirokonten[anzGirokonten-1]->getKontoNr() % 1000000) + 100;
+    }
+    if(startKapital > 0) { // TO DO : check if this correct
         db->girokontoEintragenInDB(kontoNr, startKapital, dispo, inhaberUsername);
     }
     Girokonto* gk = new Girokonto(kontoNr, startKapital, inhaberUsername ,dispo);
@@ -86,10 +100,13 @@ int KontenListe::girokontoAnlegen(double startKapital, double dispo, QString inh
     return kontoNr;
 }
 
-int KontenListe::sparkontoAnlegen(double startKapital, QString inhaberUsername)
+int KontenListe::sparkontoAnlegen(double startKapital, QString inhaberUsername, int userId)
 {
     int anzSparkonten = zaehleSparkonten();
-    int kontoNr = loggedUserSparkonten[anzSparkonten-1]->getKontoNr() + 100;
+    int kontoNr = userId * 1000199;
+    if(anzSparkonten > 0) {
+        kontoNr = userId * 1000000 + (loggedUserSparkonten[anzSparkonten-1]->getKontoNr() % 1000000) + 100;
+    }
     if(startKapital > 0) {
         db->sparkontoEintragenInDB(kontoNr, startKapital, inhaberUsername);
     }
@@ -124,11 +141,11 @@ double KontenListe::kontostandAendern(double betrag, int KontoNr)
         if(alleKonten[i]->getKontoNr() == KontoNr)
         {
             if(betrag < 0) {
-               if((dynamic_cast<Sparkonto*>(alleKonten[i]) != nullptr)) { //TODO: create method GetKontoart or smth like that
-                   alleKonten[i]->auszahlen(betrag); // HANDLE THIS so there is a QMessageBox in case of problems
-                   sparkontoLetzteAuszahlungAendern(QDate::currentDate(),KontoNr);
+               if((dynamic_cast<Sparkonto*>(alleKonten[i]) != nullptr)) { //TO DO: create method GetKontoart or smth like that
+                   alleKonten[i]->auszahlen(betrag); // TODO: HANDLE THIS so there is a QMessageBox in case of problems
+                   sparkontoLetzteAuszahlungAendern(QDate::currentDate(),KontoNr);// TODO: not necessary to repeat auszahel method, I can use sparkontoletzteauszahlungaender after with an if
                } else if((dynamic_cast<Girokonto*>(alleKonten[i]) != nullptr)) {
-                   alleKonten[i]->auszahlen(betrag); // HANDLE THIS so there is a QMessageBox in case of problems
+                   alleKonten[i]->auszahlen(betrag); // TO DO: HANDLE THIS so there is a QMessageBox in case of problems
                 }
             } else alleKonten[i]->einzahlen(betrag);
             kontostand = alleKonten[i]->getKontostand();
@@ -160,7 +177,7 @@ void KontenListe::kontenlisteLeeren()
     this->loggedUserSparkonten.clear();
 }
 
-QString KontenListe::outputError()
+QString KontenListe::outputDBError()
 {
     return db->getLetzterError(); // DEBUG
 }

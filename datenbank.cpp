@@ -51,6 +51,15 @@ QVector<Konto *> Datenbank::alleKontenHolenAusDB()
     return konten;
 }
 
+void Datenbank::kontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername)
+{
+    QSqlQuery* qry;
+    QString sql = "INSERT INTO tblKonten (KontoNr, Kontostand, Kontotyp, InhaberUsername)";
+    sql += "VALUES(" + QString::number(kontoNr) + ", " + QString::number(startkapital) + ", 'Girokonto', '" + inhaberUsername +"');";
+    qry = this->abfrage(sql);
+    delete qry;
+}
+
 QSqlQuery *Datenbank::abfrage(QString sql)
 {
     this->ready = this->db.open();
@@ -110,6 +119,7 @@ QVector<User *> Datenbank::alleUsersHolenAusDB()
 
     if (qry) {
         User *u;
+        int id;
         QString username;
         QString vorname;
         QString nachname;
@@ -117,11 +127,13 @@ QVector<User *> Datenbank::alleUsersHolenAusDB()
 
         ok = qry->first();
         while (ok) {
+            id = qry->value("Id").toInt();
             username = qry->value("Username").toString();
             nachname = qry->value("Nachname").toString();
             vorname = qry->value("Vorname").toString();
             pass = qry->value("Pass").toString();
             u = new User(username, vorname, nachname, pass);
+            u->setId(id);
             users.append(u);
             ok = qry->next();
         } //while
@@ -132,32 +144,24 @@ QVector<User *> Datenbank::alleUsersHolenAusDB()
 
 void Datenbank::girokontoEintragenInDB(int kontoNr, double startkapital, double dispo, QString inhaberUsername)
 {
-    QSqlQuery* qry1;
-    QString sql1 = "INSERT INTO tblKonten (KontoNr, Kontostand, Kontotyp, inhaberUsername)";
-    sql1 += "VALUES(" + QString::number(kontoNr) + ", " + QString::number(startkapital) + ", 'Girokonto', '" + inhaberUsername +");";
-    qry1 = this->abfrage(sql1);
-    delete qry1;
+    kontoEintragenInDB(kontoNr, startkapital, inhaberUsername);
 
-    QSqlQuery* qry2;
-    QString sql2 = "INSERT INTO tblGirokonten (KontoNr, Dispo, InhaberUsername) ";
-    sql2+= "VALUES(" + QString::number(kontoNr) + ", " + QString::number(dispo) + ");";
-    qry2 = this->abfrage(sql2);
-    delete qry2;
+    QSqlQuery* qry;
+    QString sql = "INSERT INTO tblGirokonten (KontoNr, Dispo) ";
+    sql+= "VALUES(" + QString::number(kontoNr) + ", " + QString::number(dispo) + ");";
+    qry = this->abfrage(sql);
+    delete qry;
 }
 
 void Datenbank::sparkontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername)
 {
-    QSqlQuery* qry1;
-    QString sql1 = "INSERT INTO tblKonten (KontoNr, Kontostand, Kontotyp, inhaberUsername)";
-    sql1 += "VALUES(" + QString::number(kontoNr) + ", " + QString::number(startkapital) + ", 'Sparkonto', '" + inhaberUsername +");";
-    qry1 = this->abfrage(sql1);
-    delete qry1;
+    kontoEintragenInDB(kontoNr, startkapital, inhaberUsername);
 
-    QSqlQuery* qry2;
-    QString sql2 = "INSERT INTO tblSparkonten (KontoNr) ";
-    sql2+= "VALUES(" + QString::number(kontoNr) + ");";  
-    qry2 = this->abfrage(sql2);
-    delete qry2;
+    QSqlQuery* qry;
+    QString sql = "INSERT INTO tblSparkonten (KontoNr) ";
+    sql+= "VALUES(" + QString::number(kontoNr) + ");";
+    qry = this->abfrage(sql);
+    delete qry;
 }
 
 bool Datenbank::sparkontoLetzteAuszahlungAendernInDB(QDate letzteAuszahlung, int KontoNr)
@@ -195,10 +199,12 @@ User *Datenbank::userHolenAusDB(QString username)
     qry = this->abfrage("SELECT * FROM tblUsers "
             "WHERE Username = '" + username + "'");
     if(qry->first()) {
+        int id = qry->value("Id").toInt();
         QString vorname = qry->value("Vorname").toString();
         QString nachname = qry->value("Nachname").toString();
         QString pass = qry->value("Pass").toString();
         u = new User(username, vorname, nachname, pass);
+        u->setId(id);
     }
     delete qry;
     return u;

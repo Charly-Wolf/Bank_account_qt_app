@@ -20,8 +20,15 @@ int UsersListe::zaehleEintragen()
 bool UsersListe::userAnlegen(User* user)
 {
     user->setPass(hashPass(user->getPass()));
+
+    for(User* u : meineUsers) { // Doppelte Users überprüfen
+        if (u->getUsername() == user->getUsername()) {
+            return false;
+        }
+    }
     meineUsers.append(user);
     db->userEintragenInDB(user);
+    return true;
 }
 
 User *UsersListe::holenMitIndex(int index)

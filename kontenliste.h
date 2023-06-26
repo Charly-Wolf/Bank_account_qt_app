@@ -25,6 +25,8 @@ class KontenListe
 
         void kontenZuordnen(QString inhaberUsername);
 
+        void testKontenAnlegen(QVector<Konto*> testKonten);
+
         int zaehleKonten();
         int zaehleGirokonten();
         int zaehleSparkonten();
@@ -33,8 +35,8 @@ class KontenListe
         Girokonto* girokontoHolen(int index);
         Sparkonto* sparkontoHolen(int index);
 
-        int girokontoAnlegen(double startKapital, double dispo, QString inhaberUsername); //Rückgabewert = KontoNr
-        int sparkontoAnlegen(double startKapital, QString inhaberUsername); //Rückgabewert = KontoNr
+        int girokontoAnlegen(double startKapital, double dispo, QString inhaberUsername, int userId); //Rückgabewert = KontoNr
+        int sparkontoAnlegen(double startKapital, QString inhaberUsername, int userId); //Rückgabewert = KontoNr
 
         bool sparkontoLetzteAuszahlungAendern(QDate letzteAuszahlung, int KontoNr);
         double kontostandAendern(double betrag, int KontoNr);//Rückgabewert = neuer Kontostand
@@ -45,7 +47,7 @@ class KontenListe
 
         void kontenlisteLeeren();
 
-        QString outputError(); //DEBUG
+        QString outputDBError(); //DEBUG
 };
 
 #endif // KONTENLISTE_H

@@ -15,13 +15,53 @@ FrmMain::FrmMain(QWidget *parent)
 
     QString datenbankDatei = "dbBankkonto.sqlite";
     setWindowTitle("Bankkonto App");
+
     this->users = new UsersListe(datenbankDatei);
-    initialWidgetsState();
-}
+    testUsersAnlegen();
+    initialWidgetsState();}
 
 FrmMain::~FrmMain()
 {
     delete ui;
+}
+
+bool FrmMain::testKontenAnlegen()
+{
+    QVector<Konto*> testKonten = {
+        new Girokonto(1000101,100000,testUsers[0]->getUsername(),10000),
+        new Girokonto(1000201,25000,testUsers[0]->getUsername(),3000),
+        new Girokonto(1000301,44555.33,testUsers[0]->getUsername(),15000),
+        new Girokonto(1000401,6000,testUsers[0]->getUsername(),10000),
+        new Girokonto(1000501,0,testUsers[0]->getUsername(),2500.50),
+        new Girokonto(2000601,100514,testUsers[1]->getUsername(),10000),
+        new Girokonto(2000701,100031,testUsers[1]->getUsername(),10400),
+        new Girokonto(3000801,233,testUsers[2]->getUsername(),50000),
+
+        new Sparkonto(1000199,testUsers[0]->getUsername(),0),
+        new Sparkonto(1000199,testUsers[0]->getUsername(),50),
+        new Sparkonto(2000199,testUsers[1]->getUsername(),33252.47),
+        new Sparkonto(2000199,testUsers[1]->getUsername(),555),
+        new Sparkonto(3000199,testUsers[2]->getUsername(),0)
+    };
+
+    konten->testKontenAnlegen(testKonten);
+    konten->kontenZuordnen(loggedUser->getUsername());
+    //TO DO: return true/false if error
+}
+
+bool FrmMain::testUsersAnlegen()
+{
+    testUsers = {
+        new User("MaxMust", "Maximilian", "Mustermann", "12<34?@"),
+        new User("JohnDoe", "John", "Doe", "4567_*"),
+        new User("AlexSno", "Alexander", "Snowberg", "7#890ABC!"),
+        new User("KatSch22", "Katja", "Schneider", "*_!zA7VV4@€")
+    };
+
+    for(User* u : testUsers) {
+        users->userAnlegen(u);
+    }
+    //TO DO: return true/false if error
 }
 
 void FrmMain::kontenAnzeigen()
@@ -196,10 +236,10 @@ void FrmMain::initialWidgetsState()
     ui->tabWidgetKonten->setCurrentIndex(0);
     ui->tabWidgetOperationen->setCurrentIndex(0);
 
-    ui->tableGirokonten->setColumnWidth(0, 110);
+    ui->tableGirokonten->setColumnWidth(0, 120);
     ui->tableGirokonten->setColumnWidth(1, 115);
     ui->tableGirokonten->setColumnWidth(2, 155);
-    ui->tableSparkonten->setColumnWidth(0, 115);
+    ui->tableSparkonten->setColumnWidth(0, 118);
     ui->tableSparkonten->setColumnWidth(1, 130);
     ui->tableSparkonten->setColumnWidth(2, 185);
 
@@ -228,7 +268,7 @@ void FrmMain::initialWidgetsState()
 
 QString FrmMain::kontoNrFormatieren(QString kontoStr)
 {
-    return kontoStr.right(8); //Nur KontoNr mit Formatierung (ohne Kontoart)
+    return kontoStr.right(11); //Nur KontoNr mit Formatierung (ohne Kontoart)
 }
 
 QString FrmMain::kontoStandFormatieren(double kontoStand)
@@ -475,7 +515,14 @@ void FrmMain::on_btnKontoAnlegen_clicked()
         if(ui->radBtnGiro->isChecked()) {
             if(ui->sbDispoAnlegen->value() > 0) {
                 double dispo = ui->sbDispoAnlegen->value();
-                kontoNr = konten->girokontoAnlegen(startKapital, dispo, loggedUser->getUsername());
+
+                debugMessage("CREATING NEW ACCOUNT...");
+                debugMessage("LOGGED USER ID: " + QString::number(loggedUser->getId()));
+                debugMessage("userId * 1.000.000 = " + QString::number(loggedUser->getId() * 1000000) + " - Previous KontoNr: " + QString::number(konten->girokontoHolen(konten->zaehleGirokonten()-1)->getKontoNr()) + " - prev nr + 100 = " + QString::number(konten->girokontoHolen(konten->zaehleGirokonten()-1)->getKontoNr()+100));
+
+                kontoNr = konten->girokontoAnlegen(startKapital, dispo, loggedUser->getUsername(), loggedUser->getId());
+                //debugMessage("DB ERROR: " + konten->outputDBError());
+
                 ui->sbDispoAnlegen->setValue(0);
                 ui->tableGirokonten->scrollToBottom();
             }
@@ -485,7 +532,7 @@ void FrmMain::on_btnKontoAnlegen_clicked()
             }
         }
         else if (ui->radBtnSpar->isChecked()) {
-            kontoNr = konten->sparkontoAnlegen(startKapital, loggedUser->getUsername());
+            kontoNr = konten->sparkontoAnlegen(startKapital, loggedUser->getUsername(), loggedUser->getId());
             ui->tableSparkonten->scrollToBottom();
         }
 
@@ -581,11 +628,9 @@ void FrmMain::on_btnLogin_clicked()
             loggedUser = user;
 
             this->konten = new KontenListe(users->getDB(), loggedUser->getUsername());
+            testKontenAnlegen();
+            debugMessage("DB ERROR: " + konten->outputDBError());
             kontenAnzeigen();
-
-//            debugMessage("LOGGED USER: " + loggedUser->getUsername());
-//            debugMessage("DB ERROR: " + konten->outputError());
-
 
             ui->lblUsernameStammdaten->setText(loggedUser->getUsername());
             ui->lblVornameStammdaten->setText(loggedUser->getVorname());
@@ -725,7 +770,6 @@ void FrmMain::on_btnUserAnlegen_clicked()
     QString pass = ui->lePassAnlegen->text(); //TODO: Add validation, length, characters, etc
     QString pass2 = ui->lePassAnlegen2->text(); //TODO: Add validation, length, characters, etc
 
-    //TODO: check if username already exists
     if(ui->leUserNameAnlegen->text().isEmpty() ||
             ui->lePassAnlegen->text().isEmpty() ||
             ui->lePassAnlegen2->text().isEmpty() ||
@@ -733,22 +777,27 @@ void FrmMain::on_btnUserAnlegen_clicked()
             ui->leNachameAnlegen->text().isEmpty()) {
         QMessageBox::warning(this, "User Anlegen - Fehler", "Bitte alle Felder ausfühlen");
     }
-    else if(pass == pass2) {
-        QMessageBox::information(this, "User anlegen - Erfolg", username + " wurde erfolgreich als neuer User angelegt");
+    else if(pass == pass2) {      
+        if (users->userAnlegen(new User(username, vorname, nachname, pass))) {
+            QMessageBox::information(this, "User anlegen - Erfolg", username + " wurde erfolgreich als neuer User angelegt");
 
-        users->userAnlegen(new User(username, vorname, nachname, pass));
+            ui->leUserNameAnlegen->clear();
+            ui->leVornameAnlegen->clear();
+            ui->leNachameAnlegen->clear();
+            ui->lePassAnlegen->clear();
+            ui->lePassAnlegen2->clear();
 
-        ui->leUserNameAnlegen->clear();
-        ui->leVornameAnlegen->clear();
-        ui->leNachameAnlegen->clear();
-        ui->lePassAnlegen->clear();
-        ui->lePassAnlegen2->clear();
-
-        ui->leUserName->setText(username);
-        fadeOutGuiElement(ui->widgetNeuerUser,500);
-        fadeInGuiElement(ui->widgetLogin,500);
+            ui->leUserName->setText(username);
+            fadeOutGuiElement(ui->widgetNeuerUser,500);
+            fadeInGuiElement(ui->widgetLogin,500);
+        }
+        else {
+            QMessageBox::warning(this, "User anlegen - Fehler", "Username schon vorhanden! Einen neuen eingeben!");
+            ui->leUserNameAnlegen->clear();
+            ui->lePassAnlegen->clear();
+            ui->lePassAnlegen2->clear();
+        }
     }
-
     else {
         QMessageBox::warning(this, "User Anlegen - Fehler", "Bitte das Passwort richtig wiederholen");
         ui->lePassAnlegen2->clear();

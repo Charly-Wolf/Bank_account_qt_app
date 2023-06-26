@@ -18,9 +18,9 @@ public:
     ~FrmMain();
 
 private slots:
-    void on_tableGirokonten_itemSelectionChanged();
 
-    void on_tableSparkonten_itemSelectionChanged();
+    bool testKontenAnlegen();
+    bool testUsersAnlegen();
 
     QString kontoNrFormatieren(QString kontoStr);
     QString kontoStandFormatieren(double kontoStand);
@@ -40,75 +40,46 @@ private slots:
     bool meldungenBeimAuszahlen(double betrag);
 
     void debugMessage(QString debugString);
-
     void on_btnUeberw_clicked();
-
     void on_btnAbbrechen_clicked();
-
     void on_btnEinzahlung_clicked();
-
     void on_btnAuszahlung_clicked();
-
     void on_btnOk_clicked();
-
     void on_btnKontoAnlegen_clicked();
-
     void on_radBtnGiro_clicked();
-
     void on_radBtnSpar_clicked();
-
 //    void on_btnAbbKontoAnl_clicked();
-
     void on_cBoxEmpfaenger_currentIndexChanged(const QString &arg1);
-
     void on_btnClearHistorie_clicked();
-
     void on_btnLogin_clicked();
-
     void on_btnAusloggen_clicked();
-
     void on_btnUserVerwalten_clicked();
-
     void on_btnBankkonten_clicked();
-
     void on_btnNeuerUser_clicked();
-
     void on_btnAbbUserAnlegen_clicked();
-
     void on_btnUserAnlegen_clicked();
-
     void on_btnLoginDebugOhneUsername_clicked();
-
     void on_btnPassAendern_clicked();
-
     void on_btnAbbPassAendern_clicked();
-
     void on_btnOkPassAendern_clicked();
-
     void on_lePass_returnPressed();
-
     void on_leUserName_returnPressed();
-
     void keyPressEvent(QKeyEvent* event) override;
-
     void on_btnCsvExport_clicked();
-
 //    void on_sbStartKapAnlegen_valueChanged(double arg1);
-
     void on_sbDispoAnlegen_valueChanged(double arg1);
-
     void on_tabWidgetKonten_currentChanged(int index);
-
     void on_leUserName_textChanged(const QString &arg1);
-
     void on_lePass_textChanged(const QString &arg1);
-
     void on_lePassAnlegen_textChanged(const QString &arg1);
-
     void on_tabWidgetOperationen_currentChanged(int index);
+    void on_tableGirokonten_itemSelectionChanged();
+    void on_tableSparkonten_itemSelectionChanged();
 
 private:
     Ui::FrmMain *ui;
+
+    QVector<User*> testUsers;
 
     KontenListe* konten;
     UsersListe* users;
