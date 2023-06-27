@@ -22,7 +22,7 @@ private slots:
 //    bool testKontenAnlegen();
     void testUsersAnlegen();
 
-    QString kontoNrFormatieren(QString kontoStr);
+//    QString kontoNrFormatieren(QString kontoStr);
     QString kontoStandFormatieren(double kontoStand);
     QString letzteAuszahlungFormatieren(QDate letzteAuszahlung);
     void operationModusDeaktivieren();
@@ -35,7 +35,7 @@ private slots:
     void fadeOutGuiElement(QWidget* qWidget, double duration);
     void initialWidgetsState();
     void toggleBtnSichtbarkeitWennGroesserAlsNull(double value, QWidget* button);
-    void toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, QString pass, QWidget* button); // TODO CHECK IF Name of Function is correct (sichtbarkeit oder enabled?)
+    void toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, QString pass, QWidget* button); // TO DO: CHECK IF Name of Function is correct (sichtbarkeit oder enabled?)
     void userNameUndWillkommenAnimieren();
     bool meldungenBeimAuszahlen(double betrag);
     bool erfolgMeldungBeimAuszahlen(bool reply);
@@ -60,9 +60,6 @@ private slots:
     void on_btnAbbUserAnlegen_clicked();
     void on_btnUserAnlegen_clicked();
     void on_btnLoginDebugOhneUsername_clicked();
-    void on_btnPassAendern_clicked();
-    void on_btnAbbPassAendern_clicked();
-    void on_btnOkPassAendern_clicked();
     void on_lePass_returnPressed();
     void on_leUserName_returnPressed();
     void keyPressEvent(QKeyEvent* event) override;
@@ -82,13 +79,16 @@ private:
 
     KontenListe* konten;
     UsersListe* users;
+
     Girokonto* markierteGirokonto;
     Sparkonto* markierteSparkonto;
-    User* loggedUser;
-    int markierteKontoNr;
-    int empfKontoNr;
+    int markierteKontoNr; // TO DO: DO WE REALLY NEED THIS? MAYBE DIRECTLY A MARKIERTEKONTO OBJECT
 
-    QWidget* activeWidget;
+    User* loggedUser;
+
+    int empfKontoNr; // TO DO: DO WE NEED IT AS GLOBAL VARIABLE?
+
+    QWidget* activeWidget; // TO DO: USE IT OR DELETE IT, bcs for now it does not serve any clear purpose, it is halfway used
 
     enum opModus {
         Einzahlung,

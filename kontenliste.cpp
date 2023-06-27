@@ -102,7 +102,7 @@ int KontenListe::girokontoAnlegen(double startKapital, double dispo, QString inh
     Girokonto* gk = new Girokonto(kontoNr, startKapital, inhaberUsername ,dispo);
     loggedUserGirokonten.append(gk);
     alleKonten.append(gk);
-    //TODO: sortieren
+    //TO DO: sortieren
     return kontoNr;
 }
 
@@ -120,21 +120,21 @@ int KontenListe::sparkontoAnlegen(double startKapital, QString inhaberUsername, 
     Sparkonto* sk = new Sparkonto(kontoNr, inhaberUsername, startKapital);
     loggedUserSparkonten.append(sk);
     alleKonten.append(sk);
-    //TODO: sortieren
+    //TO DO: sortieren
     return kontoNr;
 }
 
-bool KontenListe::sparkontoLetzteAuszahlungAendern(QDate letzteAuszahlung, int KontoNr)
+bool KontenListe::setLetzteAuszahlung(QDate letzteAuszahlung, int KontoNr)
 {
     QDate heute = QDate::currentDate();
     if(letzteAuszahlung <= heute) {
         int anz = zaehleSparkonten();
-        for(int i = 0; i < anz; i++) { //TODO: implement method HoleKontoMitKontoNr or smth like that -> this is used in too many other functions, so this could simplify it
+        for(int i = 0; i < anz; i++) { //TO DO: implement method HoleKontoMitKontoNr or smth like that -> this is used in too many other functions, so this could simplify it
             if(loggedUserSparkonten[i]->getKontoNr() == KontoNr) {
                 loggedUserSparkonten[i]->setLetzteAuszahlug(letzteAuszahlung);
             }
         }
-        return db->sparkontoLetzteAuszahlungAendernInDB(letzteAuszahlung, KontoNr);
+        return db->letzteAuszahlungAendernInDB(letzteAuszahlung, KontoNr);
     }
     return false;
 }
@@ -148,8 +148,8 @@ double KontenListe::kontostandAendern(double betrag, int KontoNr)
         {
             if(betrag < 0) {
                 if(alleKonten[i]->getKontoNr()) { // SPARKONTO
-                    alleKonten[i]->auszahlen(betrag); // TODO: HANDLE THIS so there is a QMessageBox in case of problems
-                   sparkontoLetzteAuszahlungAendern(QDate::currentDate(),KontoNr);// TODO: not necessary to repeat auszahel method, I can use sparkontoletzteauszahlungaender after with an if
+                    alleKonten[i]->auszahlen(betrag); // TO DO: HANDLE THIS so there is a QMessageBox in case of problems
+                   setLetzteAuszahlung(QDate::currentDate(),KontoNr);// TO DO: not necessary to repeat auszahel method, I can use sparkontoletzteauszahlungaender after with an if
                 } else if(alleKonten[i]->getKontoNr() % 100 == 01) { // GIROKONTO
                    alleKonten[i]->auszahlen(betrag); // TO DO: HANDLE THIS so there is a QMessageBox in case of problems
                 }

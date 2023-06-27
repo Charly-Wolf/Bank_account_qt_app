@@ -9,9 +9,11 @@ class Girokonto : public Konto
         double dispo;
     public:
         Girokonto(int kontoNr, double startkapital, QString inhaberUsername, double dispo);
+
         bool auszahlen(double betrag);
+
         double getDispo();
-        QString toString();
+//        QString toString();
 };
 
 #endif // GIROKONTO_H

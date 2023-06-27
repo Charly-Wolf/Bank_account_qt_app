@@ -55,12 +55,6 @@ QString UsersListe::hashPass(QString pass)
     return hashedData.toHex();
 }
 
-void UsersListe::passAendern(QString neuesPass, QString username)
-{
-    holenMitUsername(username)->setPass(neuesPass);
-    db->userPassAendernInDB(neuesPass, username);
-}
-
 Datenbank *UsersListe::getDB()
 {
     return this->db;

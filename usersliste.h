@@ -15,13 +15,16 @@ public:
     ~UsersListe();
 
     int zaehleEintragen();
+
     bool userAnlegen(User* user);
+
     User* holenMitIndex(int index);
     User* holenMitUsername(QString username);
 
     QString hashPass(QString pass);
-    void passAendern(QString neuesPass, QString username);
-    Datenbank *getDB();
+//    void passAendern(QString neuesPass, QString username);
+
+    Datenbank *getDB(); // TO DO: can i change this aproach?
 
 };
 

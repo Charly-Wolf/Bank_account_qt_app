@@ -11,12 +11,15 @@ class Konto
         QString inhaberUsername;
     public:
         Konto(int kontoNr, double startkapital, QString inhaberUsername);
+
         int getKontoNr();
         double getKontostand();
         QString getInhaberUsername();
+
         void einzahlen(double betrag);
         virtual bool auszahlen(double betrag) = 0;
-        virtual QString toString();
+
+        QString toString();
 };
 
 #endif // KONTO_H

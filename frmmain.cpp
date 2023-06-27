@@ -5,7 +5,7 @@
 #include <QKeyEvent>
 
 #include <QFileDialog> // Für das Exportieren auf CSV
-#include <QLocale> // Für die Formatierung von N<ummern --->> TODO: do that in the model toString method
+#include <QLocale> // Für die Formatierung von Nummern --->> TO DO: do that in the model toString method
 
 FrmMain::FrmMain(QWidget *parent)
     : QMainWindow(parent)
@@ -83,7 +83,7 @@ void FrmMain::kontenAnzeigen()
 
         Girokonto* girokonto = konten->girokontoHolen(i);
 
-        tableItem = new QTableWidgetItem(kontoNrFormatieren(girokonto->toString()));
+        tableItem = new QTableWidgetItem(girokonto->toString());
         ui->tableGirokonten->setItem(i, 0, tableItem);
         tableItem = new QTableWidgetItem(kontoStandFormatieren(girokonto->getKontostand()));
         ui->tableGirokonten->setItem(i, 1, tableItem);
@@ -103,7 +103,7 @@ void FrmMain::kontenAnzeigen()
 
         Sparkonto* sparkonto = konten->sparkontoHolen(i);
 
-        tableItem = new QTableWidgetItem(kontoNrFormatieren(sparkonto->toString()));
+        tableItem = new QTableWidgetItem(sparkonto->toString());
         ui->tableSparkonten->setItem(i, 0, tableItem);
         tableItem = new QTableWidgetItem(kontoStandFormatieren(sparkonto->getKontostand()));
         ui->tableSparkonten->setItem(i, 1, tableItem);
@@ -121,12 +121,12 @@ void FrmMain::kontenAnzeigen()
 
 void FrmMain::opInHistorieHinzufuegen(int kontoNr, QString operation, double betrag, double kontostand)
 {
-    //TODO: User the tblOperationen from DB and create a class and list to keep track of operations during time
+    //TO DO: User the tblOperationen from DB and create a class and list to keep track of operations during time
     int anzZeilen = ui->tableHistorie->rowCount();
 
-    QString kontoNrStr = QString::number(kontoNr);
-    int anzCharsKontoNr = kontoNrStr.length() - 1;
-    kontoNrStr = kontoNrStr.insert(anzCharsKontoNr-1, "-").rightJustified(8, '0');
+    QString kontoNrStr; // TO DO: make it more performant and do not user the 99 / 01 to check, user smth better
+    if(kontoNr % 100 == 99) kontoNrStr = markierteSparkonto->toString();
+    else if (kontoNr % 100 == 01) kontoNrStr = markierteGirokonto->toString();
     QString betragStr = QLocale().toString(betrag) + " €";
     QString kontostandStr = QLocale().toString(kontostand) + " €";
     QTableWidgetItem* tableItem;
@@ -210,7 +210,6 @@ void FrmMain::initialWidgetsState()
     ui->cBoxEmpfaenger->setVisible(false);
     ui->lblEmpf->setVisible(false);
     ui->widgetNeuerUser->setVisible(false);
-    ui->widgetPassAendern->setVisible(false);
     ui->btnUserVerwalten->setEnabled(true);
     ui->btnBankkonten->setEnabled(false);
     ui->lblBetrag->setVisible(false);
@@ -244,7 +243,7 @@ void FrmMain::initialWidgetsState()
     ui->tableSparkonten->setColumnWidth(1, 130);
     ui->tableSparkonten->setColumnWidth(2, 185);
 
-    ui->tableHistorie->setColumnWidth(0, 110);
+    ui->tableHistorie->setColumnWidth(0, 150);
     ui->tableHistorie->setColumnWidth(1, 300);
     ui->tableHistorie->setColumnWidth(2, 135);
     ui->tableHistorie->setColumnWidth(3, 115);
@@ -267,10 +266,10 @@ void FrmMain::initialWidgetsState()
 }
 
 
-QString FrmMain::kontoNrFormatieren(QString kontoStr)
-{
-    return kontoStr.right(11); //Nur KontoNr mit Formatierung (ohne Kontoart)
-}
+//QString FrmMain::kontoNrFormatieren(QString kontoStr)
+//{
+//    return kontoStr.right(11); //Nur KontoNr mit Formatierung (ohne Kontoart)
+//}
 
 QString FrmMain::kontoStandFormatieren(double kontoStand)
 {
@@ -336,7 +335,7 @@ void FrmMain::on_tableGirokonten_itemSelectionChanged()
     markierteGirokonto = konten->girokontoHolen(index);
     markierteKontoNr = markierteGirokonto->getKontoNr();
 
-    ui->lblMarkiertesKonto->setText(markierteGirokonto->toString());
+    ui->lblMarkiertesKonto->setText("Girokonto " + markierteGirokonto->toString());
     ui->btnEinzahlung->setEnabled(true);
     if(!ui->lblMarkKontostand->isVisible()) ui->lblMarkKontostand->setVisible(true);
 
@@ -369,7 +368,7 @@ void FrmMain::on_tableSparkonten_itemSelectionChanged()
     if(!ui->lblMarkKontostand->isVisible()) ui->lblMarkKontostand->setVisible(true);
     if(!ui->lblMarkKontostandTitel->isVisible()) ui->lblMarkKontostandTitel->setVisible(true);
     ui->lblMarkKontostand->setText(kontoStandFormatieren(markierteSparkonto->getKontostand()));
-    ui->lblMarkiertesKonto->setText(markierteSparkonto->toString());
+    ui->lblMarkiertesKonto->setText("Sparkonto " + markierteSparkonto->toString());
     ui->btnEinzahlung->setEnabled(true);
 
     if(markierteSparkonto->getLetzteAuszahlung() != QDate::currentDate()) { //Wenn heute schon ausgezahlt wurde...
@@ -384,7 +383,7 @@ void FrmMain::on_tableSparkonten_itemSelectionChanged()
 
 void FrmMain::on_btnUeberw_clicked()
 {
-    //TODO: simplify gui functions
+    //TO DO: simplify gui functions
     ui->btnOk->setEnabled(true);
     ui->btnAbbrechen->setEnabled(true);
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
@@ -429,7 +428,7 @@ void FrmMain::on_btnAbbrechen_clicked()
 void FrmMain::on_btnEinzahlung_clicked()
 {
 
-    //TODO: simplify gui functions
+    //TO DO: simplify gui functions
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
     ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
     ui->btnEinzahlung->setEnabled(false);
@@ -451,7 +450,7 @@ void FrmMain::on_btnEinzahlung_clicked()
 
 void FrmMain::on_btnAuszahlung_clicked()
 {
-    //TODO: simplify gui functions
+    //TO DO: simplify gui functions
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
     ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
     ui->btnEinzahlung->setEnabled(false);
@@ -553,7 +552,7 @@ void FrmMain::on_btnKontoAnlegen_clicked()
         kontoAnlegenGuiDeaktivieren();
         kontenAnzeigen();
         opInHistorieHinzufuegen(kontoNr,"Anlegen",startKapital,startKapital);
-        QMessageBox::information(this, "Konto anlegen", "Konto " + QString::number(kontoNr).insert(QString::number(kontoNr).length()-2, "-").rightJustified(8, '0') + " erfolgreich angelegt!"); // TODO: create a function for formatting KontoNr (in Model)
+        QMessageBox::information(this, "Konto anlegen", "Konto " + QString::number(kontoNr).insert(QString::number(kontoNr).length()-2, "-").rightJustified(8, '0') + " erfolgreich angelegt!"); // TO DO: create a function for formatting KontoNr (in Model)
         ui->tabWidgetKonten->setCurrentIndex(0);
     }
     else {
@@ -613,8 +612,8 @@ void FrmMain::on_btnLogin_clicked()
 {
     if (!ui->leUserName->text().isEmpty() && !ui->lePass->text().isEmpty()) {
 
-        QString username = ui->leUserName->text(); //TODO: Add validation, length, characters, etc
-        QString pass = ui->lePass->text(); //TODO: Add validation, length, characters, etc
+        QString username = ui->leUserName->text(); //TO DO: Add validation, length, characters, etc
+        QString pass = ui->lePass->text(); //TO DO: Add validation, length, characters, etc
         pass = users->hashPass(pass);
 
         User* user = users->holenMitUsername(username);
@@ -681,7 +680,7 @@ void FrmMain::on_btnAusloggen_clicked()
         ui->widgetTschuess->setVisible(true);
         ui->widgetHome->setVisible(false);
 
-        // TODO: simplify
+        // TO DO: simplify
         ui->lblUserTitel->setVisible(false);
         ui->lblEmojiUser->setVisible(false);
         ui->btnAusloggen->setVisible(false);
@@ -726,7 +725,7 @@ void FrmMain::on_btnUserVerwalten_clicked()
     ui->lblAnzSparUsrVer->setText("(" + QString::number(konten->zaehleSparkonten()) + ")");
     ui->lblAnzKontenUsrVer->setText("(" + QString::number(konten->zaehleGirokonten() + konten->zaehleSparkonten()) + ")");
 
-    ui->lblGesamtkontenstand->setText(QString::number(konten->getGesamtKontenstand(), 'f', 2) + " €"); // TODO: use / change toString method
+    ui->lblGesamtkontenstand->setText(QString::number(konten->getGesamtKontenstand(), 'f', 2) + " €"); // TO DO: use / change toString method
     ui->lblGesamtGirokontenstand->setText(QString::number(konten->getGesamtGirokontenstand(), 'f', 2) + " €");
     ui->lblGesamtSparkontenstand->setText(QString::number(konten->getGesamtSparkontenstand(), 'f', 2) + " €");
 }
@@ -769,11 +768,11 @@ void FrmMain::on_btnAbbUserAnlegen_clicked()
 
 void FrmMain::on_btnUserAnlegen_clicked()
 {
-    QString username = ui->leUserNameAnlegen->text(); //TODO: Add validation, length, characters, etc
-    QString vorname = ui->leVornameAnlegen->text(); //TODO: Add validation, length, characters, etc
-    QString nachname = ui->leNachameAnlegen->text(); //TODO: Add validation, length, characters, etc
-    QString pass = ui->lePassAnlegen->text(); //TODO: Add validation, length, characters, etc
-    QString pass2 = ui->lePassAnlegen2->text(); //TODO: Add validation, length, characters, etc
+    QString username = ui->leUserNameAnlegen->text(); //TO DO: Add validation, length, characters, etc
+    QString vorname = ui->leVornameAnlegen->text(); //TO DO: Add validation, length, characters, etc
+    QString nachname = ui->leNachameAnlegen->text(); //TO DO: Add validation, length, characters, etc
+    QString pass = ui->lePassAnlegen->text(); //TO DO: Add validation, length, characters, etc
+    QString pass2 = ui->lePassAnlegen2->text(); //TO DO: Add validation, length, characters, etc
 
     if(ui->leUserNameAnlegen->text().isEmpty() ||
             ui->lePassAnlegen->text().isEmpty() ||
@@ -845,73 +844,6 @@ void FrmMain::on_btnLoginDebugOhneUsername_clicked()
     } else QMessageBox::warning(this, "Login - Fehler", "Mind. 1 User anlegen");
 }
 
-
-void FrmMain::on_btnPassAendern_clicked()
-{
-    ui->widgetPassAendern->setVisible(true);
-}
-
-
-void FrmMain::on_btnAbbPassAendern_clicked()
-{
-    ui->widgetPassAendern->setVisible(false);
-    ui->leNeuesPass->clear();
-    ui->leAltesPass->clear();
-    ui->leNeuesPass2->clear();
-}
-
-
-void FrmMain::on_btnOkPassAendern_clicked()
-{
-
-//    QString altesPass =  ui->leAltesPass->text();
-//    QString neuesPass = ui->leNeuesPass->text();
-//    QString neuesPass2 = ui->leNeuesPass2->text();
-
-//    if(altesPass.isEmpty() || neuesPass.isEmpty() || neuesPass2.isEmpty()) {
-//        QMessageBox::warning(this, "Neues Pass - Fehler", "Bitte alle Felder ausfüllen!!");
-//    }
-//    else {
-//        altesPass =  users->hashPass(altesPass);
-//        ui->lwDebug->addItem("ALTES PASS FROM LINE: " + altesPass);
-//        ui->lwDebug->addItem("ALTES PASS FROM LIST:  " + loggedUser->getPass());
-
-//        neuesPass = users->hashPass(neuesPass);
-//        ui->lwDebug->addItem("Neues PASS1:  " + neuesPass);
-//        neuesPass2 = users->hashPass(neuesPass2);
-//        ui->lwDebug->addItem("Neues PASS2:  " + neuesPass2);
-
-////        if(altesPass == loggedUser->getPass() /*&& altesPass != neuesPass && neuesPass == neuesPass2*/) {
-//            ui->lwDebug->addItem("Altes Pass des eingeloggten Users: " + loggedUser->getPass());
-//            loggedUser->setPass(neuesPass);
-//            users->passAendern(neuesPass, loggedUser->getUsername());
-
-//            ui->lwDebug->addItem("UserNAme: " + loggedUser->getUsername());
-//            ui->lwDebug->addItem("Neues Pass des eingeloggten Users: " + loggedUser->getPass());
-
-//            ui->widgetPassAendern->setVisible(false);
-//            ui->leNeuesPass->clear();
-//            ui->leAltesPass->clear();
-//            ui->leNeuesPass2->clear();
-////        }
-
-//        if(altesPass != loggedUser->getPass()) {
-//           QMessageBox::warning(this, "Neues Pass - Fehler", "Bitte das richtige alte pass eingeben!!");
-//           ui->leAltesPass->clear();
-//        }
-//        else if(altesPass == neuesPass) {
-//            QMessageBox::warning(this, "Neues Pass - Fehler", "Neues Pass kann nicht das selbe als das alte sein!!");
-//            ui->leNeuesPass->clear();
-//            ui->leNeuesPass2->clear();
-//        }
-//        else if (neuesPass != neuesPass2) {
-//            QMessageBox::warning(this, "Neues Pass - Fehler", "Bitte neues Pass richtig wiederholen!");
-//            ui->leNeuesPass2->clear();
-//        }
-//    }
-}
-
-
 void FrmMain::on_lePass_returnPressed()
 {
     on_btnLogin_clicked();
@@ -932,7 +864,7 @@ void FrmMain::keyPressEvent(QKeyEvent *event)
 }
 
 
-void FrmMain::on_btnCsvExport_clicked() // TODO: MOVE IT TO THE MODEL, SHOULD NOT BE IN THE VIEW!!
+void FrmMain::on_btnCsvExport_clicked() // TO DO: MOVE IT TO THE MODEL, SHOULD NOT BE IN THE VIEW!!
 {
     QMessageBox::StandardButton reply;
     QMessageBox msgBox;
@@ -995,7 +927,7 @@ void FrmMain::toggleBtnSichtbarkeitWennGroesserAlsNull(double value, QWidget* bu
 
 void FrmMain::toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, QString pass, QWidget* button)
 {
-    if (username.isEmpty() || pass.isEmpty()) { // TODO: merge with function "toggleBtnSichtbarkeit.... " now it only works with ints, but make it also work with Strings
+    if (username.isEmpty() || pass.isEmpty()) { // TO DO: merge with function "toggleBtnSichtbarkeit.... " now it only works with ints, but make it also work with Strings
         button->setEnabled(false);
     } else button->setEnabled(true);
 }
@@ -1144,8 +1076,8 @@ void FrmMain::on_lePass_textChanged(const QString &arg1)
 
 void FrmMain::on_lePassAnlegen_textChanged(const QString &arg1)
 {
-    //TODO Make a better function
-    if (arg1.isEmpty()) { // TODO: merge with function "toggleBtnSichtbarkeit.... " now it only works with ints, but make it also work with Strings
+    //TO DO Make a better function
+    if (arg1.isEmpty()) { // TO DO: merge with function "toggleBtnSichtbarkeit.... " now it only works with ints, but make it also work with Strings
         ui->lblPassAnlegen2->setVisible(false);
         ui->lePassAnlegen2->setVisible(false);
     } else {

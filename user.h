@@ -6,7 +6,7 @@
 class User
 {
 private:
-    int id;
+    int id; // TO DO: DO I REALLY NEED THIS? OR IS THERE A WAY TO AVOID IT -- right now it is used to create KontoNr using the User Id as the first digits
     QString username;
     QString vorname;
     QString nachname;
@@ -21,6 +21,7 @@ public:
     QString getNachname();
     QString getPass();
     QString toString();
+
     void setPass(QString pass);
     void setId(int id);
 };

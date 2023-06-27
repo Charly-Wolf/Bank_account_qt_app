@@ -199,7 +199,7 @@ void Datenbank::sparkontoEintragenInDB(int kontoNr, double startkapital, QString
     delete qry;
 }
 
-bool Datenbank::sparkontoLetzteAuszahlungAendernInDB(QDate letzteAuszahlung, int KontoNr)
+bool Datenbank::letzteAuszahlungAendernInDB(QDate letzteAuszahlung, int KontoNr)
 {
     QSqlQuery* qry;
     QString letzteAuszahlungStr = letzteAuszahlung.toString("yyyy-MM-dd");
@@ -251,16 +251,6 @@ void Datenbank::userEintragenInDB(User *user)
     QString sql = "INSERT INTO tblUsers (Username, Vorname, Nachname, Pass) ";
     sql += "VALUES('" + user->getUsername() + "', '" + user->getVorname() + "', '";
     sql += user->getNachname() + "', '" + user->getPass() + "')";
-
-    qry = this->abfrage(sql);
-    delete qry;
-}
-
-void Datenbank::userPassAendernInDB(QString neuesPass, QString username)
-{
-    QSqlQuery* qry;
-    QString sql = "UPDATE tblKonten SET Pass = '" + neuesPass + "' ";
-    sql += "WHERE Username = '" + username + "';";
 
     qry = this->abfrage(sql);
     delete qry;

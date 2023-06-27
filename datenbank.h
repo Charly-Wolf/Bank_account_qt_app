@@ -20,18 +20,18 @@ class Datenbank
 
         QVector<Konto*> alleKontenHolenAusDB();
 //        QVector<Konto*> loggedUserKontenHolenAusDB(QString username);
+
         void kontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername);
         void girokontoEintragenInDB(int kontoNr, double startkapital, double dispo, QString inhaberUsername);
         void sparkontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername);
 
-        bool sparkontoLetzteAuszahlungAendernInDB(QDate letzteAuszahlung, int KontoNr);
-        bool kontostandAendernInDB(double kontostand, int KontoNr);
+        bool letzteAuszahlungAendernInDB(QDate letzteAuszahlung, int KontoNr);
+        bool kontostandAendernInDB(double kontostand, int KontoNr);//TO DO: THIS IS WRONG!! USE EINZAHLEN, AUSZAHLEN, UEBERWEISEN!
 
         QVector<User*> alleUsersHolenAusDB();
-        User* userHolenAusDB(QString username);
-        void userEintragenInDB(User* user);
 
-        void userPassAendernInDB(QString neuesPass, QString userName);
+        User* userHolenAusDB(QString username);// TO DO: DO I NEED THESE TWO DIFFERENT METHODS?
+        void userEintragenInDB(User* user);
 
         QString getLetzterError(); //DEBUG
 };

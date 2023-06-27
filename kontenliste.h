@@ -12,7 +12,9 @@ class KontenListe
 //        QVector<Konto*> loggedUserKonten;
         QVector<Girokonto*> loggedUserGirokonten;
         QVector<Sparkonto*> loggedUserSparkonten;
+
         Datenbank *db;
+
         double gesamtKontenstand;
         double gesamtGirokontenstand;
         double gesamtSparkontenstand;
@@ -37,7 +39,9 @@ class KontenListe
         int girokontoAnlegen(double startKapital, double dispo, QString inhaberUsername, int userId); //Rückgabewert = KontoNr
         int sparkontoAnlegen(double startKapital, QString inhaberUsername, int userId); //Rückgabewert = KontoNr
 
-        bool sparkontoLetzteAuszahlungAendern(QDate letzteAuszahlung, int KontoNr);
+        bool setLetzteAuszahlung(QDate letzteAuszahlung, int KontoNr);
+
+        //TO DO: !!!!!!!!!!!!!!!!!!!!!!!!DO NOT USE KONTOSTAND ÄNDERN!! MAKE TWO METHODS: EINZAHLEN, AUSZAHLEN, (MAYBE ALSO UEBERWEISEN)
         double kontostandAendern(double betrag, int KontoNr);//Rückgabewert = neuer Kontostand
 
         double getGesamtKontenstand();
