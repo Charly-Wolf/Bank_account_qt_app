@@ -17,7 +17,9 @@ FrmMain::FrmMain(QWidget *parent)
     setWindowTitle("Bankkonto App");
 
     this->users = new UsersListe(datenbankDatei);
+//    this->konten = new KontenListe(datenbankDatei);
     testUsersAnlegen();
+//    testKontenAnlegen();
     initialWidgetsState();}
 
 FrmMain::~FrmMain()
@@ -25,29 +27,29 @@ FrmMain::~FrmMain()
     delete ui;
 }
 
-bool FrmMain::testKontenAnlegen()
-{
-    QVector<Konto*> testKonten = {
-        new Girokonto(1000101,100000,testUsers[0]->getUsername(),10000),
-        new Girokonto(1000201,25000,testUsers[0]->getUsername(),3000),
-        new Girokonto(1000301,44555.33,testUsers[0]->getUsername(),15000),
-        new Girokonto(1000401,6000,testUsers[0]->getUsername(),10000),
-        new Girokonto(1000501,0,testUsers[0]->getUsername(),2500.50),
-        new Girokonto(2000601,100514,testUsers[1]->getUsername(),10000),
-        new Girokonto(2000701,100031,testUsers[1]->getUsername(),10400),
-        new Girokonto(3000801,233,testUsers[2]->getUsername(),50000),
+//bool FrmMain::testKontenAnlegen()
+//{
+//    QVector<Konto*> testKonten = {
+//        new Girokonto(1000101,100000,testUsers[0]->getUsername(),10000),
+//        new Girokonto(1000201,25000,testUsers[0]->getUsername(),3000),
+//        new Girokonto(1000301,44555.33,testUsers[0]->getUsername(),15000),
+//        new Girokonto(1000401,6000,testUsers[0]->getUsername(),10000),
+//        new Girokonto(1000501,0,testUsers[0]->getUsername(),2500.50),
+//        new Girokonto(2000601,100514,testUsers[1]->getUsername(),10000),
+//        new Girokonto(2000701,100031,testUsers[1]->getUsername(),10400),
+//        new Girokonto(3000801,233,testUsers[2]->getUsername(),50000),
 
-        new Sparkonto(1000199,testUsers[0]->getUsername(),0),
-        new Sparkonto(1000199,testUsers[0]->getUsername(),50),
-        new Sparkonto(2000199,testUsers[1]->getUsername(),33252.47),
-        new Sparkonto(2000199,testUsers[1]->getUsername(),555),
-        new Sparkonto(3000199,testUsers[2]->getUsername(),0)
-    };
+//        new Sparkonto(1000199,testUsers[0]->getUsername(),0),
+//        new Sparkonto(1000199,testUsers[0]->getUsername(),50),
+//        new Sparkonto(2000199,testUsers[1]->getUsername(),33252.47),
+//        new Sparkonto(2000199,testUsers[1]->getUsername(),555),
+//        new Sparkonto(3000199,testUsers[2]->getUsername(),0)
+//    };
 
-    konten->testKontenAnlegen(testKonten);
-    konten->kontenZuordnen(loggedUser->getUsername());
-    //TO DO: return true/false if error
-}
+//    konten->testKontenAnlegen(testKonten);
+//    konten->kontenZuordnen(loggedUser->getUsername());
+//    //TO DO: return true/false if error
+//}
 
 bool FrmMain::testUsersAnlegen()
 {
@@ -628,8 +630,8 @@ void FrmMain::on_btnLogin_clicked()
             loggedUser = user;
 
             this->konten = new KontenListe(users->getDB(), loggedUser->getUsername());
-            testKontenAnlegen();
-            debugMessage("DB ERROR: " + konten->outputDBError());
+//            testKontenAnlegen();
+//            debugMessage("DB ERROR: " + konten->outputDBError());
             kontenAnzeigen();
 
             ui->lblUsernameStammdaten->setText(loggedUser->getUsername());
@@ -1015,10 +1017,13 @@ void FrmMain::userNameUndWillkommenAnimieren()
 
 bool FrmMain::meldungenBeimAuszahlen(double betrag)
 {
-    if (markierteKontoNr % 100 == 99){ // If Sparkonto
+    // SPARKONTO
+    if (markierteKontoNr % 100 == 99){
+        // FEHLER -> BETRAG > KONTOSTAND
         if(betrag > markierteSparkonto->getKontostand()) {
             QMessageBox::warning(this, "Auszahlung - Fehler", "Auszahlungsbetrag kann bei Sparkonten nicht größer als Kontostand sein");
         }
+        // WARNUNG -> KONTOSTAND = 0 nach Auszahlung
         else if (betrag == markierteSparkonto->getKontostand()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung 0 sein, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
@@ -1027,22 +1032,28 @@ bool FrmMain::meldungenBeimAuszahlen(double betrag)
                 return false;
             }
         }
-    } else if (markierteKontoNr % 100 == 1) { // If Girokonto
+    }
+    // GIROKONTO
+    else if (markierteKontoNr % 100 == 1) {
+        // FEHLER -> BETRAG > DISPO + KONTOSTAND
         if(betrag > markierteGirokonto->getKontostand() + markierteGirokonto->getDispo()) {
             QMessageBox::warning(this, "Auszahlung - Fehler", "Auszahlungsbetrag kann bei Girokonto nicht größer als Kontostand + Dispo sein");
         }
+        // WARNUNG -> KONTOSTAND = 0 nach AUSZAHLUNG
         else if (betrag == markierteGirokonto->getKontostand()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung 0 sein, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
                 return true;
             } else return false;
         }
+        // WARNUNG -> KONTOSTAND = DISPO, nach Auszahlung
         else if (betrag == markierteGirokonto->getKontostand() + markierteGirokonto->getDispo()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung das Dispo Limit erreichen, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
                 return true;
             } else return false;
         }
+        // WARNUNG -> NEGATIVER KONTOSTAND, nach Auszahlung
         else if (betrag > markierteGirokonto->getKontostand()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung negativ sein, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
@@ -1050,7 +1061,8 @@ bool FrmMain::meldungenBeimAuszahlen(double betrag)
             } else return false;
         }
     }
-    return false; // TODO: check all control-paths
+    // DEFAULT (positiver Kontostand, nach Auszahlung)
+    return true;
 }
 
 void FrmMain::debugMessage(QString debugString)

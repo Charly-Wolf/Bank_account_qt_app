@@ -19,7 +19,7 @@ public:
 
 private slots:
 
-    bool testKontenAnlegen();
+//    bool testKontenAnlegen();
     bool testUsersAnlegen();
 
     QString kontoNrFormatieren(QString kontoStr);

@@ -9,6 +9,12 @@ KontenListe::KontenListe(Datenbank* db, QString inhaberUsername)
     kontenZuordnen(inhaberUsername);
 }
 
+//KontenListe::KontenListe(QString dbDatei)
+//{
+//    this->db = new Datenbank(dbDatei);
+//    this->alleKonten = this->db->alleKontenHolenAusDB();
+//}
+
 void KontenListe::kontenZuordnen(QString inhaberUsername) //Giro- von Sparkkonten trennen und zwei Listen eintragen
 {
     int anz = zaehleKonten();
@@ -27,16 +33,16 @@ void KontenListe::kontenZuordnen(QString inhaberUsername) //Giro- von Sparkkonte
     }
 }
 
-void KontenListe::testKontenAnlegen(QVector<Konto *> testKonten)
-{
-    qDebug() << "alleKonten Size: " << testKonten.size();
+//void KontenListe::testKontenAnlegen(QVector<Konto *> testKonten)
+//{
+//    qDebug() << "alleKonten Size: " << testKonten.size();
 
-    for(Konto* k : testKonten) {
-        girokontoAnlegen(k->getKontostand(), k->getDispo, k->getInhaberUsername(), k->getUserId); //Rückgabewert = KontoNr
-        sparkontoAnlegen(double startKapital, QString inhaberUsername, int userId); //Rückgabewert = KontoNr
-        qDebug() << "alleKonten: " << alleKonten.at(alleKonten.indexOf(k))->getKontoNr();
-    }
-}
+////    for(Konto* k : testKonten) {
+////        girokontoAnlegen(k->getKontostand(), k->getDispo, k->getInhaberUsername(), k->getUserId); //Rückgabewert = KontoNr
+////        sparkontoAnlegen(double startKapital, QString inhaberUsername, int userId); //Rückgabewert = KontoNr
+////        qDebug() << "alleKonten: " << alleKonten.at(alleKonten.indexOf(k))->getKontoNr();
+////    }
+//}
 
 int KontenListe::zaehleKonten()
 {

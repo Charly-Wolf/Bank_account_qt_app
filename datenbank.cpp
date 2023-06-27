@@ -2,12 +2,16 @@
 
 Datenbank::Datenbank(QString dbDatei)
 {
+    qDebug() << "DATEBANK CONSTRUCTOR";
     this->ready = false;
     this->db = (QSqlDatabase::addDatabase("QSQLITE"));
     this->db.setDatabaseName(dbDatei);
     this->ready = db.open();
+    qDebug() << "DB OPEN";
     this->letzterError = db.lastError().text();
+    if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
     this->db.close();
+    qDebug() << "DB CLOSE!";
 }
 
 Datenbank::~Datenbank()
@@ -16,7 +20,7 @@ Datenbank::~Datenbank()
 }
 
 QVector<Konto *> Datenbank::alleKontenHolenAusDB()
-{
+{   qDebug() << "---------------\nHOLE ALLE KONTEN AUS DB";
     QVector<Konto*> konten;
 
     bool ok = false;
@@ -25,28 +29,45 @@ QVector<Konto *> Datenbank::alleKontenHolenAusDB()
                                     "FROM tblKonten "
                                     "LEFT JOIN tblGirokonten ON tblKonten.KontoNr = tblGirokonten.KontoNr "
                                     "LEFT JOIN tblSparkonten ON tblKonten.KontoNr = tblSparkonten.KontoNr ");
+    if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
+    qDebug() << "SELECT QUERY";
     if(qry) {
+        if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
         ok = qry->first();
+        qDebug() << "QUERY -> FIRST";
         while(ok) {
             int kontoNr = qry->value("KontoNr").toInt();
+            qDebug() << "KONTO NR: " << kontoNr;
             double kontostand = qry->value("Kontostand").toDouble();
+            qDebug() << "KONTOSTAND: " << kontostand;
             QString kontotyp = qry->value("Kontotyp").toString();
+            qDebug() << "KONTOTYP: " << kontotyp;
             QString inhaberUsername = qry->value("InhaberUsername").toString();
+            qDebug() << "INHABER USERNAME: " << inhaberUsername;
             if(kontotyp == "Girokonto") {
                 double dispo = qry->value("Dispo").toDouble();
+                qDebug() << "DISPO: " << dispo;
                 Girokonto* gk = new Girokonto(kontoNr, kontostand, inhaberUsername, dispo);
+                qDebug() << "NEW GIROKONTO OBJEKT  CREATED " ;
                 konten.append(gk);
+                qDebug() << "APENDED TO KONTEN AT INDEX: " << konten.indexOf(gk);
 
             }
             else {
                 QDate letzteAuszahlung = QDate::fromString(qry->value("LetzteAuszahlung").toString(), "yyyy-MM-dd");
+                qDebug() << "LETZTE AUSZAHLUNG DATE: " << letzteAuszahlung;
                 Sparkonto* sk = new Sparkonto(kontoNr, inhaberUsername, kontostand);
+                qDebug() << "NEW SPARKONTO OBJECT CREATED" ;
                 sk->setLetzteAuszahlug(letzteAuszahlung);
                 konten.append(sk);
+                qDebug() << "APENDED TO KONTEN AT INDEX: " << konten.indexOf(sk);
             }
             ok = qry->next();
+            if (ok) qDebug() << "NEXT ROW IN DB!\n----------";
+            if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
         } //While
         delete qry;
+       qDebug() << "-----------------\nQRY DELETED\n----------------";
     } //If
     return konten;
 }
@@ -110,14 +131,16 @@ QSqlQuery *Datenbank::abfrage(QString sql)
 //}
 
 QVector<User *> Datenbank::alleUsersHolenAusDB()
-{
+{   qDebug() << "---------------\nHOLE ALLE USERS AUS DB";
     QVector<User*>users;
 
     bool ok;
     QSqlQuery *qry;
     qry = this->abfrage("SELECT * FROM tblUsers");
-
+    if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
+    qDebug() << "SELECT QUERY";
     if (qry) {
+        if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
         User *u;
         int id;
         QString username;
@@ -126,18 +149,30 @@ QVector<User *> Datenbank::alleUsersHolenAusDB()
         QString pass;
 
         ok = qry->first();
+        qDebug() << "QUERY -> FIRST";
         while (ok) {
+            if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
             id = qry->value("Id").toInt();
+            qDebug() << "ID: " << id;
             username = qry->value("Username").toString();
+            qDebug() << "USERNAME: " << username;
             nachname = qry->value("Nachname").toString();
+            qDebug() << "NACHNAME: " << nachname;
             vorname = qry->value("Vorname").toString();
+            qDebug() << "VORNAME: " << vorname;
             pass = qry->value("Pass").toString();
+            qDebug() << "PASS: " << pass;
             u = new User(username, vorname, nachname, pass);
+            if(u) qDebug() << "USER CREATED";
             u->setId(id);
             users.append(u);
+            qDebug() << "USER APPENDED AT INDEX: " << users.indexOf(u);
             ok = qry->next();
+            if (ok) qDebug() << "NEXT ROW IN DB!\n----------";
+            if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
         } //while
         delete qry;
+        qDebug() << "-----------------\nQRY DELETED\n----------------";
     } //if qry
     return users;
 }

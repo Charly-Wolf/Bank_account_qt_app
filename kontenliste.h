@@ -20,12 +20,11 @@ class KontenListe
     public:
 //        KontenListe(QString dbDatei);
         KontenListe(Datenbank* db, QString inhaberUsername);
-        KontenListe(Datenbank* db); // TODO check if I can make it more performant by loading all accounts at once, and then separating the ones only for the logged user
         ~KontenListe();
 
         void kontenZuordnen(QString inhaberUsername);
 
-        void testKontenAnlegen(QVector<Konto*> testKonten);
+//        void testKontenAnlegen(QVector<Konto*> testKonten);
 
         int zaehleKonten();
         int zaehleGirokonten();
