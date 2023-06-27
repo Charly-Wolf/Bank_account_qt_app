@@ -183,6 +183,38 @@ void KontenListe::kontenlisteLeeren()
     this->loggedUserSparkonten.clear();
 }
 
+bool KontenListe::csvExportieren(QString filePath, QString username)
+{
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        // Die Datei wurde erfolgreich geöffnet
+        QTextStream stream(&file);
+        stream << "KontoNr, Kontostand, KontoTyp, Dispo, LetzteAuszahlung" << endl;
+
+        int anz = this->zaehleKonten();
+
+        for (int i = 0; i < anz; i++) {
+            if(this->kontoHolen(i)->getInhaberUsername() == username) {
+//            if((dynamic_cast<Girokonto*>(this->kontoHolen(i)) != nullptr)) { // Check Datentyp
+                if(this->kontoHolen(i)->getKontoNr() % 100 == 01) { // GIROKONTO
+                    stream << this->kontoHolen(i)->getKontoNr() << ", " << this->kontoHolen(i)->getKontostand() << ", Girokonto, "
+                    << dynamic_cast<Girokonto*>(this->kontoHolen(i))->getDispo() << ", -" << endl; // Cast into Girokonto
+                } // if Girokonto
+//            else if((dynamic_cast<Sparkonto*>(this->kontoHolen(i)) != nullptr)){ // Check Datentyp
+                else if(this->kontoHolen(i)->getKontoNr() % 100 == 99) { // SPARKONTO
+                    stream << this->kontoHolen(i)->getKontoNr() << ", " << this->kontoHolen(i)->getKontostand() << ", Sparkonto, -" << ", "
+                    << dynamic_cast<Sparkonto*>(this->kontoHolen(i))->getLetzteAuszahlung().toString("dd-MM-yyyy")  << endl; // Cast into Sparkonto
+                } // else if Sparkonto
+            } // if: nur Konten vom eingeloggten User
+        } // for
+        file.close();
+        return true;
+    } // if: Datei erfolgreich geöffnet
+    else {
+        return false; // Die Datei konnte nicht erfolgreich geöffnet werden
+    }
+}
+
 QString KontenListe::outputDBError()
 {
     return db->getLetzterError(); // DEBUG

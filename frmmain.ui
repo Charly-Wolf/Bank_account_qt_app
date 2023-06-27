@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>761</height>
+    <height>885</height>
    </rect>
   </property>
   <property name="font">
@@ -82,6 +82,7 @@ QLineEdit::placeholder { font-style: italic;}</string>
       <family>Segoe UI</family>
       <pointsize>30</pointsize>
       <weight>75</weight>
+      <italic>true</italic>
       <bold>true</bold>
      </font>
     </property>
@@ -379,6 +380,13 @@ QGroupBox {border-radius: 9px;}</string>
       <height>371</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
@@ -395,6 +403,8 @@ QGroupBox {border-radius: 9px;}</string>
       <font>
        <family>Segoe UI</family>
        <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="title">
@@ -567,10 +577,12 @@ QGroupBox {border-radius: 9px;}</string>
       <font>
        <family>Segoe UI</family>
        <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="title">
-      <string>Konten Zusammenfasung</string>
+      <string>Kontenübersicht</string>
      </property>
      <widget class="QLabel" name="label_8">
       <property name="geometry">
@@ -1199,40 +1211,12 @@ QGroupBox {border-radius: 9px;}</string>
 
 </string>
     </property>
-    <widget class="QListWidget" name="lwDebug">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>80</y>
-       <width>841</width>
-       <height>171</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: white;</string>
-     </property>
-     <item>
-      <property name="text">
-       <string>DEBUG</string>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>14</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="textAlignment">
-       <set>AlignCenter</set>
-      </property>
-     </item>
-    </widget>
     <widget class="QPushButton" name="btnLoginDebugOhneUsername">
      <property name="geometry">
       <rect>
-       <x>1130</x>
-       <y>80</y>
-       <width>351</width>
+       <x>610</x>
+       <y>70</y>
+       <width>401</width>
        <height>51</height>
       </rect>
      </property>
@@ -1248,7 +1232,7 @@ QGroupBox {border-radius: 9px;}</string>
       <string notr="true">background-color:gray;color: white;</string>
      </property>
      <property name="text">
-      <string>Login ohne Zugangsdaten als random User</string>
+      <string>TESTING-Login ohne Zugangsdaten als random User</string>
      </property>
     </widget>
     <widget class="QLabel" name="lblCopyRight">
@@ -1501,30 +1485,6 @@ QGroupBox {border-radius: 9px;}</string>
          </font>
         </property>
        </widget>
-       <widget class="QPushButton" name="btnOk">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>200</x>
-          <y>420</y>
-          <width>161</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>✔  Durchführen</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="lblEmpf">
         <property name="enabled">
          <bool>true</bool>
@@ -1572,61 +1532,6 @@ QGroupBox {border-radius: 9px;}</string>
         <property name="text">
          <string>📥  Einzahlung</string>
         </property>
-       </widget>
-       <widget class="QFrame" name="frame">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>20</y>
-          <width>331</width>
-          <height>81</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <widget class="QLabel" name="lblMarkiertesKonto">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>331</width>
-           <height>81</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>14</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: #3498db;
-border: 1px solid  gray;
-border-radius: 6px;
-</string>
-         </property>
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Markieren Sie ein Konto &lt;/p&gt;&lt;p&gt;aus der Giro- oder Sparkkonto Tabelle&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignHCenter|Qt::AlignTop</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
        </widget>
        <widget class="QDoubleSpinBox" name="sboxBetrag">
         <property name="enabled">
@@ -1749,19 +1654,79 @@ border-radius: 6px;
          <string/>
         </property>
        </widget>
+       <widget class="QPushButton" name="btn_OkOperation">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>420</y>
+          <width>161</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>✔  Durchführen</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lblMarkiertesKonto">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>20</y>
+          <width>331</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>14</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: #3498db;
+border: 1px solid  gray;
+border-radius: 6px;
+</string>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Markieren Sie ein Konto &lt;/p&gt;&lt;p&gt;aus der Tabelle&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignHCenter|Qt::AlignTop</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
        <zorder>btnAuszahlung</zorder>
        <zorder>btnUeberw</zorder>
        <zorder>cBoxEmpfaenger</zorder>
-       <zorder>btnOk</zorder>
        <zorder>lblEmpf</zorder>
        <zorder>btnEinzahlung</zorder>
-       <zorder>frame</zorder>
        <zorder>btnAbbrechen</zorder>
        <zorder>sboxBetrag</zorder>
        <zorder>lblBetrag</zorder>
        <zorder>lblBetragEuro</zorder>
        <zorder>lblMarkKontostandTitel</zorder>
        <zorder>lblMarkKontostand</zorder>
+       <zorder>btn_OkOperation</zorder>
+       <zorder>lblMarkiertesKonto</zorder>
       </widget>
      </widget>
      <widget class="QWidget" name="tabKontenInfos2">
@@ -2713,28 +2678,6 @@ border-radius: 6px;
          <double>99999.000000000000000</double>
         </property>
        </widget>
-       <widget class="QPushButton" name="btnKontoAnlegen">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>140</x>
-          <y>250</y>
-          <width>151</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>✔  Speichern</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="label_5">
         <property name="geometry">
          <rect>
@@ -2827,6 +2770,28 @@ border-radius: 6px;
          <string>€</string>
         </property>
        </widget>
+       <widget class="QPushButton" name="btn_OkKontoAnlegen">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>250</y>
+          <width>151</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>✔  Speichern</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </widget>
@@ -2837,7 +2802,7 @@ border-radius: 6px;
    <widget class="QLabel" name="lblGeldEmoji">
     <property name="geometry">
      <rect>
-      <x>860</x>
+      <x>840</x>
       <y>-10</y>
       <width>91</width>
       <height>81</height>
@@ -2847,6 +2812,7 @@ border-radius: 6px;
      <font>
       <family>Segoe UI</family>
       <pointsize>30</pointsize>
+      <italic>false</italic>
      </font>
     </property>
     <property name="text">
@@ -2856,7 +2822,7 @@ border-radius: 6px;
    <widget class="QLabel" name="lblBankTitel">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>665</x>
       <y>0</y>
       <width>211</width>
       <height>61</height>
@@ -2943,10 +2909,10 @@ border: 0.7px solid rgb(99, 99, 99)</string>
    <zorder>lblEmojiUser</zorder>
    <zorder>lblGeldEmoji</zorder>
    <zorder>btnAusloggen</zorder>
+   <zorder>widgetUserVerwalten</zorder>
+   <zorder>widgetHome</zorder>
    <zorder>widgetNeuerUser</zorder>
    <zorder>widgetLogin</zorder>
-   <zorder>widgetHome</zorder>
-   <zorder>widgetUserVerwalten</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

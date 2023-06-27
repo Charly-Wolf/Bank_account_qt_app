@@ -50,6 +50,8 @@ class KontenListe
 
         void kontenlisteLeeren();
 
+        bool csvExportieren(QString filePath, QString username);
+
         QString outputDBError(); //DEBUG
 };
 

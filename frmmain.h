@@ -19,38 +19,51 @@ public:
 
 private slots:
 
+    // Testtreiber:
 //    bool testKontenAnlegen();
     void testUsersAnlegen();
 
-//    QString kontoNrFormatieren(QString kontoStr);
-    QString kontoStandFormatieren(double kontoStand);
-    QString letzteAuszahlungFormatieren(QDate letzteAuszahlung);
-    void operationModusDeaktivieren();
-    void operationModusAktivieren();
-    void empfaengerKontenLaden(int MarkiertesKontoNr);
-    void kontoAnlegenGuiDeaktivieren();
-    void kontenAnzeigen();
-    void opInHistorieHinzufuegen(int kontoNr, QString operation, double betrag, double kontostand);
-    void fadeInGuiElement(QWidget* qWidget, double duration);
-    void fadeOutGuiElement(QWidget* qWidget, double duration);
+    // Widget-Sichtbarkeit (visible, enabled):
     void initialWidgetsState();
+    void kontoAnlegenGuiDeaktivieren();
     void toggleBtnSichtbarkeitWennGroesserAlsNull(double value, QWidget* button);
     void toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, QString pass, QWidget* button); // TO DO: CHECK IF Name of Function is correct (sichtbarkeit oder enabled?)
-    void userNameUndWillkommenAnimieren();
+    void operationModusDeaktivieren();
+    void operationModusAktivieren();
+    void enterLoginModus();
+    void exitLoginModus();
+    void enterHomeModus();
+    void exitHomeModus();
+    void transitionLogout();
+//    void enterKontoAnlegenModus(); // MAYBE NOT NECESSARY
+//    void exitKontoAnlegenModus(); // MAYBE NOT NECESSARY
+
+    // TO DO: Formatierung... maybe I need to delete these methods and use toString directly from the classes (Models)
+    QString kontoStandFormatieren(double kontoStand);
+    QString letzteAuszahlungFormatieren(QDate letzteAuszahlung);
+
+    // Widgets manipulieren
+    void empfaengerKontenLaden(int MarkiertesKontoNr);
+    void kontenAnzeigen();
+    void opInHistorieHinzufuegen(int kontoNr, QString operation, double betrag, double kontostand);
     bool meldungenBeimAuszahlen(double betrag);
     bool erfolgMeldungBeimAuszahlen(bool reply);
+    bool setTabellenWidth();
 
-//    void debugMessage(QString debugString);
+    // Animationen
+    void fadeInGuiElement(QWidget* qWidget, double duration);
+    void fadeOutGuiElement(QWidget* qWidget, double duration);
+    void animateBankNameFadeIn();
+    void animateHeaderBtnsFadeIn();
+    void animateUserNameLbl();
+
+    // Buttons Event handlers
     void on_btnUeberw_clicked();
     void on_btnAbbrechen_clicked();
     void on_btnEinzahlung_clicked();
     void on_btnAuszahlung_clicked();
-    void on_btnOk_clicked();
-    void on_btnKontoAnlegen_clicked();
     void on_radBtnGiro_clicked();
     void on_radBtnSpar_clicked();
-//    void on_btnAbbKontoAnl_clicked();
-    void on_cBoxEmpfaenger_currentIndexChanged(const QString &arg1);
     void on_btnClearHistorie_clicked();
     void on_btnLogin_clicked();
     void on_btnAusloggen_clicked();
@@ -60,19 +73,25 @@ private slots:
     void on_btnAbbUserAnlegen_clicked();
     void on_btnUserAnlegen_clicked();
     void on_btnLoginDebugOhneUsername_clicked();
-    void on_lePass_returnPressed();
-    void on_leUserName_returnPressed();
-    void keyPressEvent(QKeyEvent* event) override;
     void on_btnCsvExport_clicked();
-//    void on_sbStartKapAnlegen_valueChanged(double arg1);
-    void on_sbDispoAnlegen_valueChanged(double arg1);
-    void on_tabWidgetKonten_currentChanged(int index);
-    void on_leUserName_textChanged(const QString &arg1);
-    void on_lePass_textChanged(const QString &arg1);
-    void on_lePassAnlegen_textChanged(const QString &arg1);
+    void on_btn_OkOperation_clicked();
+    void on_btn_OkKontoAnlegen_clicked();
+
+    // Values-changed Event handlers
     void on_tabWidgetOperationen_currentChanged(int index);
     void on_tableGirokonten_itemSelectionChanged();
     void on_tableSparkonten_itemSelectionChanged();
+    void on_lePassAnlegen_textChanged(const QString &arg1);
+    void on_lePass_textChanged(const QString &arg1);
+    void on_leUserName_textChanged(const QString &arg1);
+    void on_cBoxEmpfaenger_currentIndexChanged(const QString &arg1);
+    void on_sbDispoAnlegen_valueChanged(double arg1);
+    void on_tabWidgetKonten_currentChanged(int index);
+
+    // Tastatur Event handlers
+    void keyPressEvent(QKeyEvent* event) override;
+    void on_leUserName_returnPressed();
+    void on_lePass_returnPressed();
 
 private:
     Ui::FrmMain *ui;

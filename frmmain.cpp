@@ -179,78 +179,8 @@ void FrmMain::fadeOutGuiElement(QWidget* qWidget, double duration)
     fadeinAnimation->start();
 }
 
-void FrmMain::initialWidgetsState()
+void FrmMain::animateBankNameFadeIn()
 {
-    activeWidget = ui->widgetLogin;
-
-    ui->radBtnKeinKonto->setVisible(false);
-    ui->btnKontoAnlegen->setEnabled(false);
-    ui->sbStartKapAnlegen->setEnabled(false);
-    ui->sbStartKapAnlegen->setValue(0);
-    ui->sbDispoAnlegen->setValue(0);
-    ui->lblPflichtfeldKontoAnlegen->setVisible(false);
-
-    ui->lblPassAnlegen2->setVisible(false);
-    ui->lePassAnlegen2->setVisible(false);
-    ui->widgetHome->setVisible(false);
-    ui->widgetTschuess->setVisible(false);
-    ui->lblMarkKontostand->setVisible(false);
-    ui->lblMarkKontostandTitel->setVisible(false);
-    ui->leUserName->setFocus();
-    ui->btnAusloggen->setVisible(false);
-    ui->btnUserVerwalten->setVisible(false);
-    ui->btnBankkonten->setVisible(false);
-    ui->widgetUserVerwalten->setVisible(false);
-    ui->radBtnGiro->setChecked(false);
-    ui->radBtnSpar->setChecked(false);
-    ui->radBtnKeinKonto->setChecked(true);
-//    ui->widgetLogin->setVisible(true);
-    fadeInGuiElement(ui->widgetLogin, 600);
-    ui->lblUserTitel->clear();
-    ui->cBoxEmpfaenger->setVisible(false);
-    ui->lblEmpf->setVisible(false);
-    ui->widgetNeuerUser->setVisible(false);
-    ui->btnUserVerwalten->setEnabled(true);
-    ui->btnBankkonten->setEnabled(false);
-    ui->lblBetrag->setVisible(false);
-    ui->lblBetragEuro->setVisible(false);
-    ui->sboxBetrag->setVisible(false);
-    ui->btnAbbrechen->setVisible(false);
-    ui->btnOk->setVisible(false);
-    ui->lblDispoAnlegen->setVisible(false);
-    ui->sbDispoAnlegen->setVisible(false);
-    ui->lblBetragEuroDispoKontoAnlegen->setVisible(false);
-    ui->tabWidgetKontotypInfos->setVisible(false);
-    ui->lblEmojiUser->setVisible(false);
-    ui->btnAuszahlung->setEnabled(false);
-    ui->btnEinzahlung->setEnabled(false);
-    ui->btnUeberw->setEnabled(false);
-
-
-    ui->lblMarkiertesKonto->setText("Markieren Sie ein Konto \naus der Konten-Tabellen");
-
-    markierteGirokonto = NULL;
-    markierteSparkonto = NULL;
-    markierteKontoNr = NULL;
-
-    ui->tabWidgetKonten->setCurrentIndex(0);
-    ui->tabWidgetOperationen->setCurrentIndex(0);
-
-    ui->tableGirokonten->setColumnWidth(0, 120);
-    ui->tableGirokonten->setColumnWidth(1, 115);
-    ui->tableGirokonten->setColumnWidth(2, 155);
-    ui->tableSparkonten->setColumnWidth(0, 118);
-    ui->tableSparkonten->setColumnWidth(1, 130);
-    ui->tableSparkonten->setColumnWidth(2, 185);
-
-    ui->tableHistorie->setColumnWidth(0, 150);
-    ui->tableHistorie->setColumnWidth(1, 300);
-    ui->tableHistorie->setColumnWidth(2, 135);
-    ui->tableHistorie->setColumnWidth(3, 115);
-
-
-    // Animation für den Banknamen
-    //    fadeInGuiElement(ui->lblBankName, 1700);
     ui->lblNextTitel->setVisible(false);
     ui->lblBankTitel->setVisible(false);
     ui->lblGeldEmoji->setVisible(false);
@@ -265,11 +195,43 @@ void FrmMain::initialWidgetsState()
     });
 }
 
+void FrmMain::animateHeaderBtnsFadeIn()
+{
+    QTimer::singleShot(500, [=]() {
+        fadeInGuiElement(ui->btnBankkonten, 400);
+        ui->btnBankkonten->setEnabled(false);// Necessary bcs with fadein it gets activated
+        QTimer::singleShot(700, [=]() {
+            fadeInGuiElement(ui->btnUserVerwalten, 400);
+            QTimer::singleShot(700, [=]() {
+                fadeInGuiElement(ui->btnAusloggen, 400);
+            });
+        });
+    });
+}
 
-//QString FrmMain::kontoNrFormatieren(QString kontoStr)
-//{
-//    return kontoStr.right(11); //Nur KontoNr mit Formatierung (ohne Kontoart)
-//}
+void FrmMain::initialWidgetsState()
+{
+    fadeInGuiElement(ui->backgroundImg, 300);
+    fadeInGuiElement(ui->widgetDebug, 100);
+
+    enterLoginModus();
+
+    // QWidgets -> unsichtbar (außer Login)
+    ui->widgetHome->setVisible(false);
+    ui->widgetNeuerUser->setVisible(false);
+    ui->widgetTschuess->setVisible(false);
+    ui->widgetUserVerwalten->setVisible(false);
+    // Header Buttons -> unsichtbar
+    ui->btnAusloggen->setVisible(false);
+    ui->btnUserVerwalten->setVisible(false);
+    ui->btnBankkonten->setVisible(false);
+    ui->lblUserTitel->setVisible(false);
+    ui->lblEmojiUser->setVisible(false);
+
+    operationModusDeaktivieren();
+    ui->tabWidgetKontotypInfos->setVisible(false);
+}
+
 
 QString FrmMain::kontoStandFormatieren(double kontoStand)
 {
@@ -292,16 +254,155 @@ void FrmMain::operationModusDeaktivieren()
     ui->cBoxEmpfaenger->clear();
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableSparkonten->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->cBoxEmpfaenger->setVisible(false);
-    ui->lblBetrag->setVisible(false);
-    ui->lblBetragEuro->setVisible(false);
-    ui->sboxBetrag->setVisible(false);
-    ui->lblEmpf->setVisible(false);
+
+    fadeOutGuiElement(ui->lblBetrag, 300);
+    fadeOutGuiElement(ui->sboxBetrag, 300);
+    fadeOutGuiElement(ui->lblBetragEuro, 300);
+    fadeOutGuiElement(ui->lblEmpf, 300);
+    fadeOutGuiElement(ui->cBoxEmpfaenger, 300);
+    fadeOutGuiElement(ui->btnAbbrechen, 300);
+    fadeOutGuiElement(ui->btn_OkOperation, 300);
 }
 
-void FrmMain::operationModusAktivieren()
+void FrmMain::operationModusAktivieren() //TO DO: maybe use enum opModus as parameter
 {
-    // TO DO
+    ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
+
+    ui->btnEinzahlung->setEnabled(false);
+    ui->btnAuszahlung->setEnabled(false);
+    ui->btnUeberw->setEnabled(false);
+
+    switch (opModus) {
+        case Einzahlung:
+            ui->btn_OkOperation->setText("✔  Einzahlen");
+            break;
+        case Auszahlung:
+            ui->btn_OkOperation->setText("✔  Auszahlen");
+            break;
+        case Ueberweisung:
+            fadeInGuiElement(ui->lblEmpf, 300);
+            fadeInGuiElement(ui->cBoxEmpfaenger, 300);
+            ui->btn_OkOperation->setText("✔  Überweisen");
+            break;
+    }
+
+    fadeInGuiElement(ui->lblBetrag, 300);
+    fadeInGuiElement(ui->sboxBetrag, 300);
+    fadeInGuiElement(ui->lblBetragEuro, 300);
+    fadeInGuiElement(ui->btnAbbrechen, 300);
+    fadeInGuiElement(ui->btn_OkOperation, 300);
+}
+
+void FrmMain::enterLoginModus()
+{
+    animateBankNameFadeIn();
+    fadeInGuiElement(ui->widgetLogin, 900);
+    ui->leUserName->setFocus();
+//    ui->btnLogin->setEnabled(false); TO DO: Maybe unnecessary
+//    ui->lblUserTitel->clear();// TO DO : maybe this one better for after clicking on login btn
+}
+
+void FrmMain::exitLoginModus()
+{
+    fadeOutGuiElement(ui->widgetLogin,500);
+    ui->leUserName->clear();
+    ui->lePass->clear();
+
+    ui->widgetLogin->setVisible(false);
+    ui->leUserName->clear();
+    ui->lePass->clear();
+
+    ui->btnLoginDebugOhneUsername->setVisible(false);
+}
+
+void FrmMain::enterHomeModus()
+{
+    ui->widgetHome->setVisible(true);
+
+    animateUserNameLbl();
+    animateHeaderBtnsFadeIn();
+    fadeInGuiElement(ui->btnCsvExport, 1700);
+
+    ui->tabWidgetKonten->setCurrentIndex(0);
+    ui->tabWidgetOperationen->setCurrentIndex(0);
+
+    ui->lblHinweisKontenMarkieren->setVisible(false);
+    ui->lblTableGiro->setVisible(false);
+    ui->lblTableSpar->setVisible(false);
+    fadeInGuiElement(ui->lblHinweisKontenMarkieren, 700);
+    fadeInGuiElement(ui->lblTableGiro, 400);
+    fadeInGuiElement(ui->lblTableSpar, 400);
+    ui->lblMarkiertesKonto->setVisible(true);
+    ui->lblMarkiertesKonto->setText("Markieren Sie ein Konto \naus der Konten-Tabellen");
+
+    // radBtnKeinKonto is only used to uncheck the other 2 radio buttons, it will never be visible
+    ui->radBtnKeinKonto->setVisible(false);
+    ui->radBtnKeinKonto->setChecked(true);
+
+    ui->btnEinzahlung->setEnabled(false);
+    ui->btnAuszahlung->setEnabled(false);
+    ui->btnUeberw->setEnabled(false);
+    ui->lblMarkKontostandTitel->setVisible(false);
+    ui->lblMarkKontostand->setVisible(false);
+    ui->lblDispoAnlegen->setVisible(false);
+    ui->sbDispoAnlegen->setVisible(false);
+    ui->lblBetragEuroDispoKontoAnlegen->setVisible(false);
+    ui->sbStartKapAnlegen->setEnabled(false);
+    ui->btn_OkKontoAnlegen->setEnabled(false);
+    ui->sbStartKapAnlegen->setValue(0);
+    ui->sbDispoAnlegen->setValue(0);
+
+    //TO DO: check if this right
+    markierteGirokonto = NULL;
+    markierteSparkonto = NULL;
+    markierteKontoNr = NULL;
+
+    setTabellenWidth();
+}
+
+void FrmMain::exitHomeModus()
+{
+    ui->widgetHome->setVisible(false);
+
+    fadeOutGuiElement(ui->lblHinweisKontenMarkieren, 400);
+    fadeOutGuiElement(ui->lblTableGiro, 400);
+    fadeOutGuiElement(ui->lblTableSpar, 400);
+    fadeOutGuiElement(ui->btnCsvExport, 400);
+
+    operationModusDeaktivieren();
+    ui->lblMarkiertesKonto->setVisible(false);
+
+}
+
+void FrmMain::transitionLogout()
+{
+    // Fadeout Header
+    fadeOutGuiElement(ui->btnBankkonten, 400);
+    fadeOutGuiElement(ui->btnUserVerwalten, 400);
+    fadeOutGuiElement(ui->btnAusloggen, 400);
+    fadeOutGuiElement(ui->lblEmojiUser, 400);
+    fadeOutGuiElement(ui->lblUserTitel,400);
+
+    if(ui->widgetHome->isVisible()) {
+        exitHomeModus();
+    } else if (ui->widgetUserVerwalten->isVisible()) {
+        ui->widgetUserVerwalten->setVisible(false);
+    }
+
+    ui->lblTschuess->setText("Auf Wiedersehen\n" + loggedUser->getVorname() + "!");
+    fadeInGuiElement(ui->widgetTschuess, 500);
+
+    QTimer::singleShot(1200, [=]() { // Lambda Function, 1,2 Sek warten und danach Fadeout ausführen
+        fadeOutGuiElement(ui->widgetTschuess, 400);
+        fadeOutGuiElement(ui->lblNextTitel,400);
+        fadeOutGuiElement(ui->lblBankTitel,400);
+        fadeOutGuiElement(ui->lblGeldEmoji,400);
+
+        QTimer::singleShot(300, [=]() { // 300 ms warten, und danach -> enter login Modus
+            enterLoginModus();
+        });
+    });
 }
 
 void FrmMain::empfaengerKontenLaden(int MarkiertesKontoNr)
@@ -316,11 +417,11 @@ void FrmMain::empfaengerKontenLaden(int MarkiertesKontoNr)
     }
 }
 
-void FrmMain::kontoAnlegenGuiDeaktivieren()
+void FrmMain::kontoAnlegenGuiDeaktivieren() // TO DO: check if this method is necessary
 {
     ui->lblStartKapAnlegen->setEnabled(false);
     ui->sbStartKapAnlegen->setEnabled(false);
-    ui->btnKontoAnlegen->setEnabled(false);
+    ui->btn_OkKontoAnlegen->setEnabled(false);
     ui->radBtnGiro->setChecked(false);
     ui->radBtnSpar->setChecked(false);
     ui->radBtnKeinKonto->setChecked(true);
@@ -383,43 +484,18 @@ void FrmMain::on_tableSparkonten_itemSelectionChanged()
 
 void FrmMain::on_btnUeberw_clicked()
 {
-    //TO DO: simplify gui functions
-    ui->btnOk->setEnabled(true);
-    ui->btnAbbrechen->setEnabled(true);
-    ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
-    ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
-    ui->btnEinzahlung->setEnabled(false);
-    ui->btnAuszahlung->setEnabled(false);
-    ui->btnUeberw->setEnabled(false);
-    ui->cBoxEmpfaenger->setVisible(true);
-    ui->lblEmpf->setVisible(true);
-    ui->lblBetrag->setVisible(true);
-    ui->lblBetragEuro->setVisible(true);
-    ui->sboxBetrag->setVisible(true);
-    ui->btnAbbrechen->setVisible(true);
-    ui->btnOk->setVisible(true);
-    ui->btnOk->setText("✔  Überweisen");
-
     opModus = Ueberweisung;
+    operationModusAktivieren();
 }
 
 void FrmMain::on_btnAbbrechen_clicked()
 {
 
     ui->sboxBetrag->setValue(0);
-//    operationModusDeaktivieren();
-    ui->btnAbbrechen->setVisible(false);
-    ui->btnOk->setVisible(false);
-    ui->lblBetrag->setVisible(false);
-    ui->sboxBetrag->setVisible(false);
-    ui->lblBetragEuro->setVisible(false);
-    ui->cBoxEmpfaenger->setVisible(false);
-    ui->lblEmpf->setVisible(false);
+    operationModusDeaktivieren();
     ui->btnEinzahlung->setEnabled(true);
     ui->btnAuszahlung->setEnabled(true);
-    ui->btnUeberw->setEnabled(true);
-    ui->tableGirokonten->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableSparkonten->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->btnUeberw->setEnabled(true); //TO DO: see if necessary-> it is already in empfKontenLaden method
 //    ui->lblMarkiertesKonto->setText("Markieren Sie ein Konto \naus der Konten-Tabellen");
 //    ui->lblMarkKontostand->setVisible(false);
 //    ui->lblMarkKontostandTitel->setVisible(false);
@@ -427,143 +503,20 @@ void FrmMain::on_btnAbbrechen_clicked()
 
 void FrmMain::on_btnEinzahlung_clicked()
 {
-
-    //TO DO: simplify gui functions
-    ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
-    ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
-    ui->btnEinzahlung->setEnabled(false);
-    ui->btnAuszahlung->setEnabled(false);
-    ui->btnUeberw->setEnabled(false);
-    ui->btnOk->setEnabled(true);
-    ui->btnAbbrechen->setEnabled(true);
-
-    ui->lblBetrag->setVisible(true);
-    ui->lblBetragEuro->setVisible(true);
-    ui->sboxBetrag->setVisible(true);
-    ui->btnAbbrechen->setVisible(true);
-    ui->btnOk->setVisible(true);
-    ui->btnOk->setText("✔  Einzahlen");
-
     opModus = Einzahlung;
+    operationModusAktivieren();//TO DO: maybe directla opModus = Einzahlung as parameter, that way the variable opModus would not be necessary
 }
 
 
 void FrmMain::on_btnAuszahlung_clicked()
 {
-    //TO DO: simplify gui functions
-    ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
-    ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
-    ui->btnEinzahlung->setEnabled(false);
-    ui->btnAuszahlung->setEnabled(false);
-    ui->btnUeberw->setEnabled(false);
-    ui->btnOk->setEnabled(true);
-    ui->btnAbbrechen->setEnabled(true);
-    ui->lblBetrag->setVisible(true);
-    ui->lblBetragEuro->setVisible(true);
-    ui->sboxBetrag->setVisible(true);
-    ui->btnAbbrechen->setVisible(true);
-    ui->btnOk->setVisible(true);
-    ui->btnOk->setText("✔  Auszahlen");
-
     opModus = Auszahlung;
+    operationModusAktivieren();
 }
-
-
-void FrmMain::on_btnOk_clicked()
-{
-    bool ok = false;
-    if (ui->sboxBetrag->value() > 0) {
-        double betrag = ui->sboxBetrag->value();
-        double neuerKontostand;
-        ui->sboxBetrag->setValue(0);
-
-        switch (opModus) {
-            case Einzahlung:
-                QMessageBox::information(this, "Einzahlung - Erfolg", "Die Einzahlung wurde erfolgreich durchgeführt");
-                neuerKontostand = konten->kontostandAendern(betrag, markierteKontoNr);
-                opInHistorieHinzufuegen(markierteKontoNr,"Einzahlung", betrag, neuerKontostand);
-                break;
-            case Auszahlung:
-                ok = meldungenBeimAuszahlen(betrag);
-
-                qDebug() << markierteGirokonto->getKontostand();
-                qDebug() << betrag;
-
-                if (ok) {
-                    neuerKontostand = konten->kontostandAendern(-betrag, markierteKontoNr);
-                    opInHistorieHinzufuegen(markierteKontoNr,"Auszahlung", -betrag, neuerKontostand);
-                }
-                break;
-            case Ueberweisung:
-                ok = meldungenBeimAuszahlen(betrag);
-                if(ok) {
-                    double neuerKontostandSender = konten->kontostandAendern(-betrag, markierteKontoNr);
-                    double neuerKontostandEmpfpaenger = konten->kontostandAendern(betrag, empfKontoNr);
-                    opInHistorieHinzufuegen(markierteKontoNr,"Überweisung (senden)", -betrag, neuerKontostandSender);
-                    opInHistorieHinzufuegen(empfKontoNr,"Überweisung (empfangen)", betrag, neuerKontostandEmpfpaenger);
-                }
-                break;
-        }
-        kontenAnzeigen();
-        operationModusDeaktivieren();
-        ui->btnAbbrechen->setVisible(false);
-        ui->btnOk->setVisible(false);
-        ui->lwDebug->addItem("NEUER GIROKONTO STAND: " + QString::number(markierteGirokonto->getKontostand()));//DEBUG
-
-    }
-    else QMessageBox::warning(this, "Operationen - Fehler", "Bitte einen Betrag eingeben");
-}
-
-
-void FrmMain::on_btnKontoAnlegen_clicked()
-{
-    if(ui->sbStartKapAnlegen->value() >= 0) {
-
-        double startKapital = ui->sbStartKapAnlegen->value();
-
-        if(startKapital == 0 && (ui->sbDispoAnlegen->value() > 0 || ui->radBtnSpar->isChecked())) {
-            QMessageBox::StandardButton reply = QMessageBox::question(this, "Ausloggen", "Wollen Sie ein neues Konto <b>ohne Startkapital</b> anlegen?", QMessageBox::Yes | QMessageBox::No);
-            if (reply == QMessageBox::No) return;
-        }
-
-        int kontoNr = 0;
-
-        if(ui->radBtnGiro->isChecked()) {
-            if(ui->sbDispoAnlegen->value() > 0) {
-                double dispo = ui->sbDispoAnlegen->value();
-
-
-                kontoNr = konten->girokontoAnlegen(startKapital, dispo, loggedUser->getUsername(), loggedUser->getId());
-
-                ui->sbDispoAnlegen->setValue(0);
-                ui->tableGirokonten->scrollToBottom();
-            }
-            else{
-                QMessageBox::warning(this, "Konto anlegen - Fehler", "Bitte Dispo eingeben");
-                return;
-            }
-        }
-        else if (ui->radBtnSpar->isChecked()) {
-            kontoNr = konten->sparkontoAnlegen(startKapital, loggedUser->getUsername(), loggedUser->getId());
-            ui->tableSparkonten->scrollToBottom();
-        }
-
-        ui->sbStartKapAnlegen->setValue(0);
-        kontoAnlegenGuiDeaktivieren();
-        kontenAnzeigen();
-        opInHistorieHinzufuegen(kontoNr,"Anlegen",startKapital,startKapital);
-        QMessageBox::information(this, "Konto anlegen", "Konto " + QString::number(kontoNr).insert(QString::number(kontoNr).length()-2, "-").rightJustified(8, '0') + " erfolgreich angelegt!"); // TO DO: create a function for formatting KontoNr (in Model)
-        ui->tabWidgetKonten->setCurrentIndex(0);
-    }
-    else {
-        QMessageBox::warning(this, "Konto anlegen - Fehler", "Bitte Startkapital eingeben");
-    }
-}
-
 
 void FrmMain::on_radBtnGiro_clicked()
 {
-    toggleBtnSichtbarkeitWennGroesserAlsNull(ui->sbDispoAnlegen->value(), ui->btnKontoAnlegen);
+    toggleBtnSichtbarkeitWennGroesserAlsNull(ui->sbDispoAnlegen->value(), ui->btn_OkKontoAnlegen);
 
 
     ui->lblStartKapAnlegen->setEnabled(true);
@@ -579,7 +532,7 @@ void FrmMain::on_radBtnGiro_clicked()
 }
     void FrmMain::on_radBtnSpar_clicked()
 {
-    ui->btnKontoAnlegen->setEnabled(true);
+    ui->btn_OkKontoAnlegen->setEnabled(true);
     ui->lblStartKapAnlegen->setEnabled(true);
     ui->sbStartKapAnlegen->setEnabled(true);
 
@@ -620,40 +573,14 @@ void FrmMain::on_btnLogin_clicked()
 
         if(user && user->getPass() == pass)
         {
-            ui->widgetLogin->setVisible(false);
-            ui->leUserName->clear();
-            ui->lePass->clear();
-
-            ui->btnAusloggen->setVisible(true);
-            ui->widgetLogin->setVisible(false);
-            ui->widgetNeuerUser->setVisible(false);
-            ui->btnBankkonten->setVisible(true);
-            ui->btnUserVerwalten->setVisible(true);
-
-            ui->btnLoginDebugOhneUsername->setVisible(false);
-
             loggedUser = user;
 
             this->konten = new KontenListe(users->getDB(), loggedUser->getUsername());
 //            testKontenAnlegen();
             kontenAnzeigen();
 
-            ui->lblUsernameStammdaten->setText(loggedUser->getUsername());
-            ui->lblVornameStammdaten->setText(loggedUser->getVorname());
-            ui->lblNachnameStammdaten->setText(loggedUser->getNachname());
-
-            userNameUndWillkommenAnimieren();
-
-            ui->widgetHome->setVisible(true);
-
-            fadeInGuiElement(ui->lblUserTitel, 1400);
-            fadeInGuiElement(ui->lblEmojiUser, 1500);
-            fadeInGuiElement(ui->btnBankkonten, 1500);
-            ui->btnBankkonten->setEnabled(false);
-            fadeInGuiElement(ui->btnUserVerwalten, 1500);
-            fadeInGuiElement(ui->btnAusloggen, 1500);
-            fadeInGuiElement(ui->tabWidgetOperationen, 1600);
-            fadeInGuiElement(ui->btnCsvExport, 1700);
+            exitLoginModus();
+            enterHomeModus();
         }
         else
         {
@@ -667,64 +594,33 @@ void FrmMain::on_btnLogin_clicked()
 
 void FrmMain::on_btnAusloggen_clicked()
 {
-    QMessageBox::StandardButton reply;
-    QMessageBox msgBox;
-
-    reply = msgBox.question(this, "Ausloggen", "Wollen Sie sich wirklich ausloggen?", QMessageBox::Yes | QMessageBox::No);
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Ausloggen", "Wollen Sie sich wirklich ausloggen?", QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
 
         konten->kontenlisteLeeren();
 
-        //BUG: When logging out, logging in and then logging out again-> widgetTschuess does not appear
-        ui->widgetTschuess->setVisible(true);
-        ui->widgetHome->setVisible(false);
-
-        // TO DO: simplify
-        ui->lblUserTitel->setVisible(false);
-        ui->lblEmojiUser->setVisible(false);
-        ui->btnAusloggen->setVisible(false);
-        ui->btnBankkonten->setVisible(false);
-        ui->btnUserVerwalten->setVisible(false);
-        ui->widgetUserVerwalten->setVisible(false);
-
-        operationModusDeaktivieren();
-
-        ui->lblTschuess->setText("Auf Wiedersehen\n" + loggedUser->getVorname() + "!");
-        fadeInGuiElement(ui->lblTschuess,600);
-        activeWidget = ui->widgetTschuess;
-
-        fadeOutGuiElement(ui->lblNextTitel, 600);
-        fadeOutGuiElement(ui->lblBankTitel, 600);
-        fadeOutGuiElement(ui->lblGeldEmoji, 600);
-
-        QTimer::singleShot(1500, [=]() { // Lambda Function -> widgetTschuess für 1,5 Sekunden anzeigen
-            fadeOutGuiElement(ui->widgetTschuess, 700);
-
-            activeWidget = ui->widgetTschuess;
-            ui->btnLoginDebugOhneUsername->setVisible(true);
-            initialWidgetsState();
-            ui->btnLogin->setEnabled(false);
-            activeWidget = ui->widgetLogin;
-        });
+        transitionLogout();
     }
 }
 
 
 void FrmMain::on_btnUserVerwalten_clicked()
 {
-    activeWidget = ui->widgetUserVerwalten;
-
     ui->widgetHome->setVisible(false);
     fadeInGuiElement(ui->widgetUserVerwalten, 300);
 
     ui->btnUserVerwalten->setEnabled(false);
     ui->btnBankkonten->setEnabled(true);
     ui->widgetUserVerwalten->setVisible(true);
+    //Stammdaten:
+    ui->lblUsernameStammdaten->setText(loggedUser->getUsername());
+    ui->lblVornameStammdaten->setText(loggedUser->getVorname());
+    ui->lblNachnameStammdaten->setText(loggedUser->getNachname());
+    //Konten Übersicht:
     ui->lblAnzGiroUsrVer->setText("(" + QString::number(konten->zaehleGirokonten()) + ")");
     ui->lblAnzSparUsrVer->setText("(" + QString::number(konten->zaehleSparkonten()) + ")");
     ui->lblAnzKontenUsrVer->setText("(" + QString::number(konten->zaehleGirokonten() + konten->zaehleSparkonten()) + ")");
-
     ui->lblGesamtkontenstand->setText(QString::number(konten->getGesamtKontenstand(), 'f', 2) + " €"); // TO DO: use / change toString method
     ui->lblGesamtGirokontenstand->setText(QString::number(konten->getGesamtGirokontenstand(), 'f', 2) + " €");
     ui->lblGesamtSparkontenstand->setText(QString::number(konten->getGesamtSparkontenstand(), 'f', 2) + " €");
@@ -734,29 +630,29 @@ void FrmMain::on_btnUserVerwalten_clicked()
 void FrmMain::on_btnBankkonten_clicked()
 {
     ui->widgetHome->setVisible(true);
-    fadeInGuiElement(ui->tabWidgetOperationen, 300);
+    if(ui->tabWidgetKonten->currentIndex() == 2) {
+        ui->tabOperationen->setVisible(false);
+        fadeInGuiElement(ui->tabWidgetKontotypInfos,300);
+    }
     ui->btnUserVerwalten->setEnabled(true);
     ui->btnBankkonten->setEnabled(false);
-//    ui->widgetUserVerwalten->setVisible(false);
-    fadeOutGuiElement(activeWidget, 100);
+    fadeOutGuiElement(ui->widgetUserVerwalten, 100);
 }
 
 
-void FrmMain::on_btnNeuerUser_clicked()
+void FrmMain::on_btnNeuerUser_clicked() // TO DO: choose a better name for this btn, it is confusing with btnUserAnlegen
 {
     fadeOutGuiElement(ui->widgetLogin,500);
-    activeWidget = ui->widgetNeuerUser;
-
-//    ui->widgetNeuerUser->setVisible(true);
-    fadeInGuiElement(activeWidget, 500);
-    ui->leUserName->clear();
+    fadeInGuiElement(ui->widgetNeuerUser, 500);
+//    ui->leUserName->clear();
     ui->lePass->clear();
+    ui->lblPassAnlegen2->setVisible(false);
+    ui->lePassAnlegen2->setVisible(false);
 }
 
 
 void FrmMain::on_btnAbbUserAnlegen_clicked()
 {
-    activeWidget = ui->widgetLogin;
     fadeOutGuiElement(ui->widgetNeuerUser, 500);
     fadeInGuiElement(ui->widgetLogin,500);
     ui->leUserNameAnlegen->clear();
@@ -766,7 +662,7 @@ void FrmMain::on_btnAbbUserAnlegen_clicked()
     ui->lePassAnlegen2->clear();
 }
 
-void FrmMain::on_btnUserAnlegen_clicked()
+void FrmMain::on_btnUserAnlegen_clicked() // TO DO: TEST if works fine
 {
     QString username = ui->leUserNameAnlegen->text(); //TO DO: Add validation, length, characters, etc
     QString vorname = ui->leVornameAnlegen->text(); //TO DO: Add validation, length, characters, etc
@@ -837,7 +733,7 @@ void FrmMain::on_btnLoginDebugOhneUsername_clicked()
         ui->lblVornameStammdaten->setText(loggedUser->getVorname());
         ui->lblNachnameStammdaten->setText(loggedUser->getNachname());
 
-        userNameUndWillkommenAnimieren();
+        animateUserNameLbl();
 
         fadeInGuiElement(ui->lblEmojiUser, 1500);
         fadeInGuiElement(ui->tabWidgetOperationen, 1500);
@@ -864,55 +760,31 @@ void FrmMain::keyPressEvent(QKeyEvent *event)
 }
 
 
-void FrmMain::on_btnCsvExport_clicked() // TO DO: MOVE IT TO THE MODEL, SHOULD NOT BE IN THE VIEW!!
+void FrmMain::on_btnCsvExport_clicked()
 {
     QMessageBox::StandardButton reply;
     QMessageBox msgBox;
-    reply = msgBox.question(this, "CSV exportieren", "Wollen Sie wirklich die Konteninformationen in eine CSV Datei exportieren?", QMessageBox::Yes | QMessageBox::No);
-
+    reply = msgBox.question(this, "CSV exportieren", "Wollen Sie wirklich die Konteninformationen in eine CSV Datei exportieren?",
+                            QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-
         QString folderPath = QFileDialog::getExistingDirectory(nullptr, "Select Folder to Save CSV", QDir::homePath());
-
         if (!folderPath.isEmpty()) {
             QString filePath = folderPath + "/konten_" + loggedUser->getNachname() + "_" + loggedUser->getVorname() + ".csv";
-
-            QFile file(filePath);
-            if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                // File opened successfully
-                QTextStream stream(&file);
-
-                stream << "KontoNr, Kontostand, KontoTyp, Dispo, LetzteAuszahlung" << endl;;
-
-                int anz = konten->zaehleKonten();
-                for (int i = 0; i < anz; i++) {
-                    if(konten->kontoHolen(i)->getInhaberUsername() == loggedUser->getUsername()) {
-                        if((dynamic_cast<Girokonto*>(konten->kontoHolen(i)) != nullptr)) {
-                           stream << konten->kontoHolen(i)->getKontoNr() << ", " << konten->kontoHolen(i)->getKontostand() << ", Girokonto, " << dynamic_cast<Girokonto*>(konten->kontoHolen(i))->getDispo() << ", -" << endl; // Cast into Girokonto
-                        }
-                        else if((dynamic_cast<Sparkonto*>(konten->kontoHolen(i)) != nullptr)){
-                            stream << konten->kontoHolen(i)->getKontoNr() << ", " << konten->kontoHolen(i)->getKontostand() << ", Sparkonto, -" << ", " << dynamic_cast<Sparkonto*>(konten->kontoHolen(i))->getLetzteAuszahlung().toString("dd-MM-yyyy")  << endl; // Cast into Sparkonto
-                        }
-                    }
-                }
-
-                file.close();
-                QMessageBox::information(this, "CSV exportieren", "Die Konteninformationen wurden erfolgreich in " + folderPath + "/konten.csv exportiert!");
-            } else {
-                // Failed to open the file
-                // Handle the error
-                QString errorMessage = "Error: " + file.errorString();
-                QMessageBox::critical(this, "CSV exportieren - Fehler", errorMessage);
-//                ui->lwDebug->addItem(errorMessage);
-            }
-        }
-    }
-
+            if (konten->csvExportieren(filePath, loggedUser->getUsername())) {
+                QMessageBox::information(this, "CSV exportieren", "Die Konteninformationen wurden erfolgreich in " + folderPath +
+                                         "/konten.csv exportiert!");
+            } // if: csv exportieren erfolgreich
+            else {
+                QMessageBox::critical(this, "CSV exportieren - Fehler", "Fehler beim Speichern der Datei, überprüfen Sie bitte, "
+                                      "ob die Datei schon geöffnet ist");
+            } // else
+        } // if: Dateipfad ausgewählt
+    } // if: Antwort vom User == yes
 }
 
 void FrmMain::on_sbDispoAnlegen_valueChanged(double arg1)
 {
-    toggleBtnSichtbarkeitWennGroesserAlsNull(arg1, ui->btnKontoAnlegen);
+    toggleBtnSichtbarkeitWennGroesserAlsNull(arg1, ui->btn_OkKontoAnlegen);
 }
 
 void FrmMain::toggleBtnSichtbarkeitWennGroesserAlsNull(double value, QWidget* button)
@@ -932,18 +804,20 @@ void FrmMain::toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, Q
     } else button->setEnabled(true);
 }
 
-void FrmMain::userNameUndWillkommenAnimieren()
+void FrmMain::animateUserNameLbl()
 {
     ui->lblUserTitel->setText("Willkommen " + loggedUser->getVorname());
     ui->lblEmojiUser->setVisible(true);
     ui->tableGirokonten->scrollToTop();
     ui->tableSparkonten->scrollToTop();
 
+    fadeInGuiElement(ui->lblEmojiUser, 1500); // TO DO: check if this is ok here, before it was outside this function
+
     // Animation: zuerst der Text "Wilkommen Vorname" fades in, danach fades out, danach der Text "Vorname Nachname" fades in
     fadeInGuiElement(ui->lblUserTitel, 800);
-    QTimer::singleShot(1500, [=]() {
+    QTimer::singleShot(1500, [=]() { // Lambda Function, 1,5 Sek warten und danach Fadeout ausführen
         fadeOutGuiElement(ui->lblUserTitel, 900);
-        QTimer::singleShot(1000, [=]() {
+        QTimer::singleShot(1000, [=]() { // Lambda Function, 1 Sek warten und danach weitere Statements ausführen
             ui->lblUserTitel->setText(loggedUser->getVorname() + " " + loggedUser->getNachname());
             fadeInGuiElement(ui->lblUserTitel, 800);
         });
@@ -1021,7 +895,7 @@ bool FrmMain::meldungenBeimAuszahlen(double betrag)
 
 }
 
-bool FrmMain::erfolgMeldungBeimAuszahlen(bool reply)
+bool FrmMain::erfolgMeldungBeimAuszahlen(bool reply) // TO DO: Maybe I dont need this method
 {
     if (reply) {
         QString opModStr;
@@ -1032,12 +906,19 @@ bool FrmMain::erfolgMeldungBeimAuszahlen(bool reply)
     return false;
 }
 
-//void FrmMain::debugMessage(QString debugString)
-//{
-//    ui->lwDebug->addItem(debugString);
-//}
-
-
+bool FrmMain::setTabellenWidth()
+{
+    ui->tableGirokonten->setColumnWidth(0, 120);
+    ui->tableGirokonten->setColumnWidth(1, 115);
+    ui->tableGirokonten->setColumnWidth(2, 155);
+    ui->tableSparkonten->setColumnWidth(0, 118);
+    ui->tableSparkonten->setColumnWidth(1, 130);
+    ui->tableSparkonten->setColumnWidth(2, 185);
+    ui->tableHistorie->setColumnWidth(0, 150);
+    ui->tableHistorie->setColumnWidth(1, 300);
+    ui->tableHistorie->setColumnWidth(2, 135);
+    ui->tableHistorie->setColumnWidth(3, 115);
+}
 
 void FrmMain::on_tabWidgetKonten_currentChanged(int index)
 {
@@ -1056,8 +937,23 @@ void FrmMain::on_tabWidgetKonten_currentChanged(int index)
             ui->tabWidgetKonten->setFixedWidth(1001);
         }
         if(!ui->tabWidgetOperationen->isEnabled()) {
-            fadeInGuiElement(ui->tabWidgetOperationen, 300);
-            fadeOutGuiElement(ui->tabWidgetKontotypInfos,300);
+//             QMessageBox::StandardButton reply = QMessageBox::question(this, "Konto anlegen", "Wollen Sie kein Konto anlegen?", QMessageBox::Yes | QMessageBox::No);
+//             if (reply == QMessageBox::Yes) {
+                 fadeInGuiElement(ui->tabWidgetOperationen, 300);
+                 fadeOutGuiElement(ui->tabWidgetKontotypInfos,300);
+
+////                  TO DO: use konto anlegen deactivieren
+//                 ui->sbStartKapAnlegen->setValue(0);
+//                 ui->sbDispoAnlegen->setValue(0);
+//                 ui->radBtnKeinKonto->setChecked(true);
+//                 ui->sbDispoAnlegen->setEnabled(false);
+//                 ui->sbStartKapAnlegen->setEnabled(false);
+//                 ui->sbDispoAnlegen->setVisible(false);
+//                 ui->lblDispoAnlegen->setVisible(false);
+//                 ui->lblBetragEuroDispoKontoAnlegen->setVisible(false);
+//             } else {
+//                 ui->tabWidgetKonten->setCurrentIndex(2);
+//             }
         }
     }
 }
@@ -1094,5 +990,96 @@ void FrmMain::on_tabWidgetOperationen_currentChanged(int index)
     }else if (index == 1) {
         ui->tabWidgetOperationen->setFixedWidth(401);
     }
+}
+
+
+void FrmMain::on_btn_OkKontoAnlegen_clicked()
+{
+    if(ui->sbStartKapAnlegen->value() >= 0) {
+
+        double startKapital = ui->sbStartKapAnlegen->value();
+
+        if(startKapital == 0 && (ui->sbDispoAnlegen->value() > 0 || ui->radBtnSpar->isChecked())) {
+            QMessageBox::StandardButton reply = QMessageBox::question(this, "Ausloggen", "Wollen Sie ein neues Konto <b>ohne Startkapital</b> anlegen?", QMessageBox::Yes | QMessageBox::No);
+            if (reply == QMessageBox::No) return;
+        }
+
+        int kontoNr = 0;
+
+        if(ui->radBtnGiro->isChecked()) {
+            if(ui->sbDispoAnlegen->value() > 0) {
+                double dispo = ui->sbDispoAnlegen->value();
+
+
+                kontoNr = konten->girokontoAnlegen(startKapital, dispo, loggedUser->getUsername(), loggedUser->getId());
+
+                ui->sbDispoAnlegen->setValue(0);
+                ui->tableGirokonten->scrollToBottom();
+            }
+            else{
+                QMessageBox::warning(this, "Konto anlegen - Fehler", "Bitte Dispo eingeben");
+                return;
+            }
+        }
+        else if (ui->radBtnSpar->isChecked()) {
+            kontoNr = konten->sparkontoAnlegen(startKapital, loggedUser->getUsername(), loggedUser->getId());
+            ui->tableSparkonten->scrollToBottom();
+        }
+
+        ui->sbStartKapAnlegen->setValue(0); // TO DO: maybe use enterHomeModus after creating a new account
+        kontoAnlegenGuiDeaktivieren();
+        kontenAnzeigen();
+        opInHistorieHinzufuegen(kontoNr,"Anlegen",startKapital,startKapital);
+        QMessageBox::information(this, "Konto anlegen", "Konto " + QString::number(kontoNr).insert(QString::number(kontoNr).length()-2, "-").rightJustified(8, '0') + " erfolgreich angelegt!"); // TO DO: create a function for formatting KontoNr (in Model)
+        ui->tabWidgetKonten->setCurrentIndex(0);
+    }
+    else {
+        QMessageBox::warning(this, "Konto anlegen - Fehler", "Bitte Startkapital eingeben");
+    }
+}
+
+
+void FrmMain::on_btn_OkOperation_clicked()
+{
+    bool ok = false;
+    if (ui->sboxBetrag->value() > 0) {
+        double betrag = ui->sboxBetrag->value();
+        double neuerKontostand;
+        ui->sboxBetrag->setValue(0);
+
+        switch (opModus) {
+            case Einzahlung:
+                QMessageBox::information(this, "Einzahlung - Erfolg", "Die Einzahlung wurde erfolgreich durchgeführt");
+                neuerKontostand = konten->kontostandAendern(betrag, markierteKontoNr);
+                opInHistorieHinzufuegen(markierteKontoNr,"Einzahlung", betrag, neuerKontostand);
+                break;
+            case Auszahlung:
+                ok = meldungenBeimAuszahlen(betrag);
+
+                qDebug() << markierteGirokonto->getKontostand();
+                qDebug() << betrag;
+
+                if (ok) {
+                    neuerKontostand = konten->kontostandAendern(-betrag, markierteKontoNr);
+                    opInHistorieHinzufuegen(markierteKontoNr,"Auszahlung", -betrag, neuerKontostand);
+                }
+                break;
+            case Ueberweisung:
+                ok = meldungenBeimAuszahlen(betrag);
+                if(ok) {
+                    double neuerKontostandSender = konten->kontostandAendern(-betrag, markierteKontoNr);
+                    double neuerKontostandEmpfpaenger = konten->kontostandAendern(betrag, empfKontoNr);
+                    opInHistorieHinzufuegen(markierteKontoNr,"Überweisung (senden)", -betrag, neuerKontostandSender);
+                    opInHistorieHinzufuegen(empfKontoNr,"Überweisung (empfangen)", betrag, neuerKontostandEmpfpaenger);
+                }
+                break;
+        }
+        kontenAnzeigen();
+        operationModusDeaktivieren();
+        ui->btnAbbrechen->setVisible(false);
+        ui->btn_OkOperation->setVisible(false);
+
+    }
+    else QMessageBox::warning(this, "Operationen - Fehler", "Bitte einen Betrag eingeben");
 }
 

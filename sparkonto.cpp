@@ -22,19 +22,6 @@ QDate Sparkonto::getLetzteAuszahlung()
     return this-> letzteAuszahlung;
 }
 
-//QString Sparkonto::toString()
-//{
-//    QString strKontoNr = QString::number(this->getKontoNr());
-//        // Ensure the string has at least 8 characters
-//        while (strKontoNr.length() < 9) {
-//            strKontoNr = "0" + strKontoNr;
-//        }
-//        // Insert "-" at specific positions
-//        strKontoNr = strKontoNr.insert(3, "-").insert(strKontoNr.size() - 2, "-");
-
-//    return strKontoNr;
-//}
-
 bool Sparkonto::setLetzteAuszahlug(QDate letzteAuszahlung)
 {
     QDate heute = QDate::currentDate();
