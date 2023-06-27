@@ -53,11 +53,11 @@ FrmMain::~FrmMain()
 
 bool FrmMain::testUsersAnlegen()
 {
-    testUsers = {
-        new User("MaxMust", "Maximilian", "Mustermann", "12<34?@"),
-        new User("JohnDoe", "John", "Doe", "4567_*"),
-        new User("AlexSno", "Alexander", "Snowberg", "7#890ABC!"),
-        new User("KatSch22", "Katja", "Schneider", "*_!zA7VV4@€")
+    QVector<User*>testUsers = {
+        new User("MaxMust", "Maximilian", "Mustermann", "1234"),
+        new User("JohnDoe", "John", "Doe", "1234"),
+        new User("AlexSno", "Alexander", "Snowberg", "1234"),
+        new User("KatSch22", "Katja", "Schneider", "1234")
     };
 
     for(User* u : testUsers) {
@@ -303,7 +303,7 @@ void FrmMain::operationModusDeaktivieren()
 
 void FrmMain::operationModusAktivieren()
 {
-    //TODO
+    // TO DO
 }
 
 void FrmMain::empfaengerKontenLaden(int MarkiertesKontoNr)
@@ -407,13 +407,24 @@ void FrmMain::on_btnUeberw_clicked()
 
 void FrmMain::on_btnAbbrechen_clicked()
 {
+
     ui->sboxBetrag->setValue(0);
-    operationModusDeaktivieren();
+//    operationModusDeaktivieren();
     ui->btnAbbrechen->setVisible(false);
     ui->btnOk->setVisible(false);
-    ui->lblMarkiertesKonto->setText("Markieren Sie ein Konto \naus der Konten-Tabellen");
-    ui->lblMarkKontostand->setVisible(false);
-    ui->lblMarkKontostandTitel->setVisible(false);
+    ui->lblBetrag->setVisible(false);
+    ui->sboxBetrag->setVisible(false);
+    ui->lblBetragEuro->setVisible(false);
+    ui->cBoxEmpfaenger->setVisible(false);
+    ui->lblEmpf->setVisible(false);
+    ui->btnEinzahlung->setEnabled(true);
+    ui->btnAuszahlung->setEnabled(true);
+    ui->btnUeberw->setEnabled(true);
+    ui->tableGirokonten->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableSparkonten->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->lblMarkiertesKonto->setText("Markieren Sie ein Konto \naus der Konten-Tabellen");
+//    ui->lblMarkKontostand->setVisible(false);
+//    ui->lblMarkKontostandTitel->setVisible(false);
 }
 
 void FrmMain::on_btnEinzahlung_clicked()
@@ -470,6 +481,7 @@ void FrmMain::on_btnOk_clicked()
 
         switch (opModus) {
             case Einzahlung:
+                QMessageBox::information(this, "Einzahlung - Erfolg", "Die Einzahlung wurde erfolgreich durchgeführt");
                 neuerKontostand = konten->kontostandAendern(betrag, markierteKontoNr);
                 opInHistorieHinzufuegen(markierteKontoNr,"Einzahlung", betrag, neuerKontostand);
                 break;
@@ -1017,6 +1029,8 @@ void FrmMain::userNameUndWillkommenAnimieren()
 
 bool FrmMain::meldungenBeimAuszahlen(double betrag)
 {
+    bool erfolg = false;
+
     // SPARKONTO
     if (markierteKontoNr % 100 == 99){
         // FEHLER -> BETRAG > KONTOSTAND
@@ -1027,11 +1041,14 @@ bool FrmMain::meldungenBeimAuszahlen(double betrag)
         else if (betrag == markierteSparkonto->getKontostand()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung 0 sein, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
-                return true;
+//                return true;
+                erfolg = true;
             } else {
-                return false;
+//                return false;
+                erfolg = false;
             }
         }
+        else erfolg = true;
     }
     // GIROKONTO
     else if (markierteKontoNr % 100 == 1) {
@@ -1043,26 +1060,53 @@ bool FrmMain::meldungenBeimAuszahlen(double betrag)
         else if (betrag == markierteGirokonto->getKontostand()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung 0 sein, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
-                return true;
-            } else return false;
+//                return true;
+                erfolg = true;
+            } else {
+//                return false;
+                erfolg = false;
+            }
         }
         // WARNUNG -> KONTOSTAND = DISPO, nach Auszahlung
         else if (betrag == markierteGirokonto->getKontostand() + markierteGirokonto->getDispo()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung das Dispo Limit erreichen, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
-                return true;
-            } else return false;
+//                return true;
+                erfolg = true;
+            } else {
+//                return false;
+                erfolg = false;
+            }
         }
         // WARNUNG -> NEGATIVER KONTOSTAND, nach Auszahlung
         else if (betrag > markierteGirokonto->getKontostand()) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung negativ sein, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
-                return true;
-            } else return false;
+//                return true;
+                erfolg = true;
+            } else {
+//                return false;
+                erfolg = false;
+            }
         }
+        else erfolg = true;
     }
+
     // DEFAULT (positiver Kontostand, nach Auszahlung)
-    return true;
+    qDebug() << "ANSWER TO MESSAGEBOX: " << erfolg;
+    return erfolgMeldungBeimAuszahlen(erfolg);
+
+}
+
+bool FrmMain::erfolgMeldungBeimAuszahlen(bool reply)
+{
+    if (reply) {
+        QString opModStr;
+        opModus == Auszahlung? opModStr = "Auszahlung" : opModStr = "Überweisung";
+        QMessageBox::information(this, opModStr + " - Erfolg", "Die " + opModStr + " wurde erfolgreich durchgeführt");
+        return true;
+    }
+    return false;
 }
 
 void FrmMain::debugMessage(QString debugString)

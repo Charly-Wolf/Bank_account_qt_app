@@ -147,10 +147,10 @@ double KontenListe::kontostandAendern(double betrag, int KontoNr)
         if(alleKonten[i]->getKontoNr() == KontoNr)
         {
             if(betrag < 0) {
-               if((dynamic_cast<Sparkonto*>(alleKonten[i]) != nullptr)) { //TO DO: create method GetKontoart or smth like that
-                   alleKonten[i]->auszahlen(betrag); // TODO: HANDLE THIS so there is a QMessageBox in case of problems
+                if(alleKonten[i]->getKontoNr()) { // SPARKONTO
+                    alleKonten[i]->auszahlen(betrag); // TODO: HANDLE THIS so there is a QMessageBox in case of problems
                    sparkontoLetzteAuszahlungAendern(QDate::currentDate(),KontoNr);// TODO: not necessary to repeat auszahel method, I can use sparkontoletzteauszahlungaender after with an if
-               } else if((dynamic_cast<Girokonto*>(alleKonten[i]) != nullptr)) {
+                } else if(alleKonten[i]->getKontoNr() % 100 == 01) { // GIROKONTO
                    alleKonten[i]->auszahlen(betrag); // TO DO: HANDLE THIS so there is a QMessageBox in case of problems
                 }
             } else alleKonten[i]->einzahlen(betrag);

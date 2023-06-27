@@ -38,6 +38,7 @@ private slots:
     void toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, QString pass, QWidget* button); // TODO CHECK IF Name of Function is correct (sichtbarkeit oder enabled?)
     void userNameUndWillkommenAnimieren();
     bool meldungenBeimAuszahlen(double betrag);
+    bool erfolgMeldungBeimAuszahlen(bool reply);
 
     void debugMessage(QString debugString);
     void on_btnUeberw_clicked();
@@ -78,8 +79,6 @@ private slots:
 
 private:
     Ui::FrmMain *ui;
-
-    QVector<User*> testUsers;
 
     KontenListe* konten;
     UsersListe* users;
