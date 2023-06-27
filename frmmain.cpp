@@ -51,7 +51,7 @@ FrmMain::~FrmMain()
 //    //TO DO: return true/false if error
 //}
 
-bool FrmMain::testUsersAnlegen()
+void FrmMain::testUsersAnlegen()
 {
     QVector<User*>testUsers = {
         new User("MaxMust", "Maximilian", "Mustermann", "1234"),
@@ -63,7 +63,6 @@ bool FrmMain::testUsersAnlegen()
     for(User* u : testUsers) {
         users->userAnlegen(u);
     }
-    //TO DO: return true/false if error
 }
 
 void FrmMain::kontenAnzeigen()
@@ -487,7 +486,11 @@ void FrmMain::on_btnOk_clicked()
                 break;
             case Auszahlung:
                 ok = meldungenBeimAuszahlen(betrag);
-                if (ok) { // BUG: even when there is a warning or a question and we press no, the operation will be executed.... it should not be like that
+
+                qDebug() << markierteGirokonto->getKontostand();
+                qDebug() << betrag;
+
+                if (ok) {
                     neuerKontostand = konten->kontostandAendern(-betrag, markierteKontoNr);
                     opInHistorieHinzufuegen(markierteKontoNr,"Auszahlung", -betrag, neuerKontostand);
                 }
@@ -530,12 +533,8 @@ void FrmMain::on_btnKontoAnlegen_clicked()
             if(ui->sbDispoAnlegen->value() > 0) {
                 double dispo = ui->sbDispoAnlegen->value();
 
-                debugMessage("CREATING NEW ACCOUNT...");
-                debugMessage("LOGGED USER ID: " + QString::number(loggedUser->getId()));
-                debugMessage("userId * 1.000.000 = " + QString::number(loggedUser->getId() * 1000000) + " - Previous KontoNr: " + QString::number(konten->girokontoHolen(konten->zaehleGirokonten()-1)->getKontoNr()) + " - prev nr + 100 = " + QString::number(konten->girokontoHolen(konten->zaehleGirokonten()-1)->getKontoNr()+100));
 
                 kontoNr = konten->girokontoAnlegen(startKapital, dispo, loggedUser->getUsername(), loggedUser->getId());
-                //debugMessage("DB ERROR: " + konten->outputDBError());
 
                 ui->sbDispoAnlegen->setValue(0);
                 ui->tableGirokonten->scrollToBottom();
@@ -578,13 +577,8 @@ void FrmMain::on_radBtnGiro_clicked()
     fadeInGuiElement(ui->lblBetragEuroDispoKontoAnlegen,300);
     fadeInGuiElement(ui->lblPflichtfeldKontoAnlegen, 300);
 
-//BUG: when first cliking on sparkonto radbtn and then comming back to giro, if dispo is null, the butons for abb und ok are enabled... they should be disabled
-//    toggleBtnSichtbarkeitWennGroesserAlsNull(ui->sbStartKapAnlegen->value(), ui->btnKontoAnlegen);
-//    toggleBtnSichtbarkeitWennGroesserAlsNull(ui->sbStartKapAnlegen->value(), ui->btnAbbKontoAnl);
 }
-
-
-void FrmMain::on_radBtnSpar_clicked()
+    void FrmMain::on_radBtnSpar_clicked()
 {
     ui->btnKontoAnlegen->setEnabled(true);
     ui->lblStartKapAnlegen->setEnabled(true);
@@ -643,7 +637,6 @@ void FrmMain::on_btnLogin_clicked()
 
             this->konten = new KontenListe(users->getDB(), loggedUser->getUsername());
 //            testKontenAnlegen();
-//            debugMessage("DB ERROR: " + konten->outputDBError());
             kontenAnzeigen();
 
             ui->lblUsernameStammdaten->setText(loggedUser->getUsername());
@@ -732,8 +725,6 @@ void FrmMain::on_btnUserVerwalten_clicked()
     ui->lblAnzGiroUsrVer->setText("(" + QString::number(konten->zaehleGirokonten()) + ")");
     ui->lblAnzSparUsrVer->setText("(" + QString::number(konten->zaehleSparkonten()) + ")");
     ui->lblAnzKontenUsrVer->setText("(" + QString::number(konten->zaehleGirokonten() + konten->zaehleSparkonten()) + ")");
-
-    debugMessage("Anz Sparkonten: " + QString::number(konten->zaehleSparkonten()));
 
     ui->lblGesamtkontenstand->setText(QString::number(konten->getGesamtKontenstand(), 'f', 2) + " €"); // TODO: use / change toString method
     ui->lblGesamtGirokontenstand->setText(QString::number(konten->getGesamtGirokontenstand(), 'f', 2) + " €");
@@ -1079,7 +1070,7 @@ bool FrmMain::meldungenBeimAuszahlen(double betrag)
             }
         }
         // WARNUNG -> NEGATIVER KONTOSTAND, nach Auszahlung
-        else if (betrag > markierteGirokonto->getKontostand()) {
+        else if (betrag > markierteGirokonto->getKontostand() && markierteGirokonto->getKontostand() >= 0) {
             QMessageBox::StandardButton reply = QMessageBox::question(this, "Auszahlzung", "Ihr Kontostand wird nach der Auszahlung negativ sein, wollen Sie trotzdem die Auszahlung durchführen?");
             if (reply == QMessageBox::Yes) {
 //                return true;
@@ -1109,10 +1100,10 @@ bool FrmMain::erfolgMeldungBeimAuszahlen(bool reply)
     return false;
 }
 
-void FrmMain::debugMessage(QString debugString)
-{
-    ui->lwDebug->addItem(debugString);
-}
+//void FrmMain::debugMessage(QString debugString)
+//{
+//    ui->lwDebug->addItem(debugString);
+//}
 
 
 

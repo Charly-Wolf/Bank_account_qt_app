@@ -55,7 +55,7 @@ QVector<Konto *> Datenbank::alleKontenHolenAusDB()
             }
             else {
                 QDate letzteAuszahlung = QDate::fromString(qry->value("LetzteAuszahlung").toString(), "yyyy-MM-dd");
-                qDebug() << "LETZTE AUSZAHLUNG DATE: " << letzteAuszahlung;
+                qDebug() << "LETZTE-AUSZAHLUNG DATE: " << letzteAuszahlung;
                 Sparkonto* sk = new Sparkonto(kontoNr, inhaberUsername, kontostand);
                 qDebug() << "NEW SPARKONTO OBJECT CREATED" ;
                 sk->setLetzteAuszahlug(letzteAuszahlung);

@@ -20,7 +20,7 @@ public:
 private slots:
 
 //    bool testKontenAnlegen();
-    bool testUsersAnlegen();
+    void testUsersAnlegen();
 
     QString kontoNrFormatieren(QString kontoStr);
     QString kontoStandFormatieren(double kontoStand);
@@ -40,7 +40,7 @@ private slots:
     bool meldungenBeimAuszahlen(double betrag);
     bool erfolgMeldungBeimAuszahlen(bool reply);
 
-    void debugMessage(QString debugString);
+//    void debugMessage(QString debugString);
     void on_btnUeberw_clicked();
     void on_btnAbbrechen_clicked();
     void on_btnEinzahlung_clicked();
