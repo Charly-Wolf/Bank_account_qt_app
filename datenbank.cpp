@@ -131,7 +131,7 @@ QVector<User *> Datenbank::alleUsersHolenAusDB()
     QVector<User*>users;
 
     bool ok;
-    QSqlQuery *qry;
+    QSqlQuery* qry;
     qry = this->abfrage("SELECT * FROM tblUsers");
     if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
     qDebug() << "SELECT QUERY";
