@@ -58,6 +58,7 @@ private slots:
     void animateUserNameLbl();
 
     // Buttons Event handlers
+    void on_btn_OkKontoAnlegen_clicked();
     void on_btnUeberw_clicked();
     void on_btnAbbrechen_clicked();
     void on_btnEinzahlung_clicked();
@@ -75,7 +76,6 @@ private slots:
     void on_btnLoginDebugOhneUsername_clicked();
     void on_btnCsvExport_clicked();
     void on_btn_OkOperation_clicked();
-    void on_btn_OkKontoAnlegen_clicked();
 
     // Values-changed Event handlers
     void on_tabWidgetOperationen_currentChanged(int index);
@@ -101,11 +101,11 @@ private:
 
     Girokonto* markierteGirokonto;
     Sparkonto* markierteSparkonto;
-    int markierteKontoNr; // TO DO: DO WE REALLY NEED THIS? MAYBE DIRECTLY A MARKIERTEKONTO OBJECT
+    int markierteKontoNr; // TO DO: DO I REALLY NEED THIS? MAYBE DIRECTLY A MARKIERTEKONTO OBJECT
 
     User* loggedUser;
 
-    int empfKontoNr; // TO DO: DO WE NEED IT AS GLOBAL VARIABLE?
+    int empfKontoNr; // TO DO: DO I NEED IT AS GLOBAL VARIABLE?
 
     QWidget* activeWidget; // TO DO: USE IT OR DELETE IT, bcs for now it does not serve any clear purpose, it is halfway used
 

@@ -121,7 +121,7 @@ void FrmMain::kontenAnzeigen()
 
 void FrmMain::opInHistorieHinzufuegen(int kontoNr, QString operation, double betrag, double kontostand)
 {
-    //TO DO: User the tblOperationen from DB and create a class and list to keep track of operations during time
+    //TO DO NICE TO HAVE: Use the tblOperationen from DB and create a class and list to keep track of operations during time
     int anzZeilen = ui->tableHistorie->rowCount();
 
     QString kontoNrStr; // TO DO: make it more performant and do not user the 99 / 01 to check, user smth better
@@ -232,7 +232,6 @@ void FrmMain::initialWidgetsState()
     ui->tabWidgetKontotypInfos->setVisible(false);
 }
 
-
 QString FrmMain::kontoStandFormatieren(double kontoStand)
 {
     QString formKontostand = QLocale().toString(kontoStand);
@@ -299,8 +298,6 @@ void FrmMain::enterLoginModus()
     animateBankNameFadeIn();
     fadeInGuiElement(ui->widgetLogin, 900);
     ui->leUserName->setFocus();
-//    ui->btnLogin->setEnabled(false); TO DO: Maybe unnecessary
-//    ui->lblUserTitel->clear();// TO DO : maybe this one better for after clicking on login btn
 }
 
 void FrmMain::exitLoginModus()
@@ -490,7 +487,6 @@ void FrmMain::on_btnUeberw_clicked()
 
 void FrmMain::on_btnAbbrechen_clicked()
 {
-
     ui->sboxBetrag->setValue(0);
     operationModusDeaktivieren();
     ui->btnEinzahlung->setEnabled(true);
@@ -518,12 +514,10 @@ void FrmMain::on_radBtnGiro_clicked()
 {
     toggleBtnSichtbarkeitWennGroesserAlsNull(ui->sbDispoAnlegen->value(), ui->btn_OkKontoAnlegen);
 
-
     ui->lblStartKapAnlegen->setEnabled(true);
     ui->sbStartKapAnlegen->setEnabled(true);
     ui->lblDispoAnlegen->setVisible(true);
     ui->sbDispoAnlegen->setVisible(true);
-
     fadeInGuiElement(ui->lblDispoAnlegen, 300);
     fadeInGuiElement(ui->sbDispoAnlegen, 300);
     fadeInGuiElement(ui->lblBetragEuroDispoKontoAnlegen,300);
@@ -1082,4 +1076,3 @@ void FrmMain::on_btn_OkOperation_clicked()
     }
     else QMessageBox::warning(this, "Operationen - Fehler", "Bitte einen Betrag eingeben");
 }
-
