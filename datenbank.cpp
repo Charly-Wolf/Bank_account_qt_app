@@ -72,11 +72,11 @@ QVector<Konto *> Datenbank::alleKontenHolenAusDB()
     return konten;
 }
 
-void Datenbank::kontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername)
+void Datenbank::kontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername, QString kontotyp)
 {
     QSqlQuery* qry;
     QString sql = "INSERT INTO tblKonten (KontoNr, Kontostand, Kontotyp, InhaberUsername)";
-    sql += "VALUES(" + QString::number(kontoNr) + ", " + QString::number(startkapital) + ", 'Girokonto', '" + inhaberUsername +"');";
+    sql += "VALUES(" + QString::number(kontoNr) + ", " + QString::number(startkapital) + ", '"+ kontotyp +"', '" + inhaberUsername +"');";
     qry = this->abfrage(sql);
     delete qry;
 }
@@ -179,7 +179,7 @@ QVector<User *> Datenbank::alleUsersHolenAusDB()
 
 void Datenbank::girokontoEintragenInDB(int kontoNr, double startkapital, double dispo, QString inhaberUsername)
 {
-    kontoEintragenInDB(kontoNr, startkapital, inhaberUsername);
+    kontoEintragenInDB(kontoNr, startkapital, inhaberUsername, "Girokonto");
 
     QSqlQuery* qry;
     QString sql = "INSERT INTO tblGirokonten (KontoNr, Dispo) ";
@@ -190,7 +190,7 @@ void Datenbank::girokontoEintragenInDB(int kontoNr, double startkapital, double 
 
 void Datenbank::sparkontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername)
 {
-    kontoEintragenInDB(kontoNr, startkapital, inhaberUsername);
+    kontoEintragenInDB(kontoNr, startkapital, inhaberUsername, "Sparkonto");
 
     QSqlQuery* qry;
     QString sql = "INSERT INTO tblSparkonten (KontoNr) ";

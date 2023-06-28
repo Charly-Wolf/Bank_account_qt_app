@@ -21,7 +21,7 @@ class Datenbank
         QVector<Konto*> alleKontenHolenAusDB();
 //        QVector<Konto*> loggedUserKontenHolenAusDB(QString username);
 
-        void kontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername);
+        void kontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername, QString kontotyp);
         void girokontoEintragenInDB(int kontoNr, double startkapital, double dispo, QString inhaberUsername);
         void sparkontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername);
 
