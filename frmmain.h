@@ -45,7 +45,7 @@ private slots:
     // Widgets manipulieren
     void empfaengerKontenLaden(int MarkiertesKontoNr);
     void kontenAnzeigen();
-    void opInHistorieHinzufuegen(int kontoNr, QString operation, double betrag, double kontostand);
+    void opInHistorieHinzufuegen(QString kontoNrString, QString operation, double betrag, double kontostand);
     bool meldungenBeimAuszahlen(double betrag);
     bool erfolgMeldungBeimAuszahlen(bool reply);
     bool setTabellenWidth();

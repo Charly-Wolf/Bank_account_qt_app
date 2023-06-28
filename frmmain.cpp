@@ -119,21 +119,18 @@ void FrmMain::kontenAnzeigen()
     anzSparkonten > 1 || anzSparkonten == 0? ui->lblTableSpar->setText("Sparkonten") : ui->lblTableSpar->setText("Sparkonto");
 }
 
-void FrmMain::opInHistorieHinzufuegen(int kontoNr, QString operation, double betrag, double kontostand)
+void FrmMain::opInHistorieHinzufuegen(QString kontoNrString, QString operation, double betrag, double kontostand)
 {
     //TO DO NICE TO HAVE: Use the tblOperationen from DB and create a class and list to keep track of operations during time
     int anzZeilen = ui->tableHistorie->rowCount();
 
-    QString kontoNrStr; // TO DO: make it more performant and do not user the 99 / 01 to check, user smth better
-    if(kontoNr % 100 == 99) kontoNrStr = markierteSparkonto->toString();
-    else if (kontoNr % 100 == 01) kontoNrStr = markierteGirokonto->toString();
     QString betragStr = QLocale().toString(betrag) + " €";
     QString kontostandStr = QLocale().toString(kontostand) + " €";
     QTableWidgetItem* tableItem;
 
     ui->tableHistorie->insertRow(anzZeilen);
 
-    tableItem = new QTableWidgetItem(kontoNrStr);
+    tableItem = new QTableWidgetItem(kontoNrString);
     ui->tableHistorie->setItem(anzZeilen, 0, tableItem);
     tableItem = new QTableWidgetItem(operation);
     ui->tableHistorie->setItem(anzZeilen, 1, tableItem);
@@ -414,17 +411,19 @@ void FrmMain::empfaengerKontenLaden(int MarkiertesKontoNr)
     }
 }
 
-void FrmMain::kontoAnlegenGuiDeaktivieren() // TO DO: check if this method is necessary
+void FrmMain::kontoAnlegenGuiDeaktivieren()
 {
     ui->lblStartKapAnlegen->setEnabled(false);
-    ui->sbStartKapAnlegen->setEnabled(false);
+    ui->sbStartKapAnlegen->setValue(0);
     ui->btn_OkKontoAnlegen->setEnabled(false);
-    ui->radBtnGiro->setChecked(false);
-    ui->radBtnSpar->setChecked(false);
     ui->radBtnKeinKonto->setChecked(true);
-    ui->lblDispoAnlegen->setVisible(false);
-    ui->sbDispoAnlegen->setVisible(false);
-    ui->lblBetragEuroDispoKontoAnlegen->setVisible(false);
+    fadeOutGuiElement(ui->lblDispoAnlegen,300);
+    fadeOutGuiElement(ui->sbDispoAnlegen,300);
+    fadeOutGuiElement(ui->lblBetragEuroDispoKontoAnlegen,300);
+    ui->tabWidgetKonten->setCurrentIndex(0);
+    fadeOutGuiElement(ui->tabWidgetKontotypInfos, 300);
+    fadeInGuiElement(ui->tabWidgetOperationen, 300);
+    ui->sbStartKapAnlegen->setEnabled(false);
 }
 
 void FrmMain::on_tableGirokonten_itemSelectionChanged()
@@ -986,52 +985,63 @@ void FrmMain::on_tabWidgetOperationen_currentChanged(int index)
     }
 }
 
-
 void FrmMain::on_btn_OkKontoAnlegen_clicked()
 {
-    if(ui->sbStartKapAnlegen->value() >= 0) {
+    bool ok = false;
+    QString fehlermeldungTitel = "Konto anlegen - Fehler";
+    double startKapital = ui->sbStartKapAnlegen->value();
+    double dispo = ui->sbDispoAnlegen->value();
+    int angelegtesKontoNr = 0; // TO DO : Maybe I do not need it
 
-        double startKapital = ui->sbStartKapAnlegen->value();
-
-        if(startKapital == 0 && (ui->sbDispoAnlegen->value() > 0 || ui->radBtnSpar->isChecked())) {
-            QMessageBox::StandardButton reply = QMessageBox::question(this, "Ausloggen", "Wollen Sie ein neues Konto <b>ohne Startkapital</b> anlegen?", QMessageBox::Yes | QMessageBox::No);
-            if (reply == QMessageBox::No) return;
+    if(startKapital > 0) { // Startkapital > 0
+        if (ui->radBtnKeinKonto->isChecked()){
+            QMessageBox::critical(this, fehlermeldungTitel, "Bitte einen Kontotyp auswählen");
+            ok = false;
         }
-
-        int kontoNr = 0;
-
-        if(ui->radBtnGiro->isChecked()) {
-            if(ui->sbDispoAnlegen->value() > 0) {
-                double dispo = ui->sbDispoAnlegen->value();
-
-
-                kontoNr = konten->girokontoAnlegen(startKapital, dispo, loggedUser->getUsername(), loggedUser->getId());
-
-                ui->sbDispoAnlegen->setValue(0);
-                ui->tableGirokonten->scrollToBottom();
-            }
-            else{
-                QMessageBox::warning(this, "Konto anlegen - Fehler", "Bitte Dispo eingeben");
-                return;
+        else if(ui->radBtnGiro->isChecked()) {   // GIRO
+            if(dispo > 0) { // Dispo > 0
+                ok = true;
+            } else {    // Dipso <= 0
+                QMessageBox::warning(this, fehlermeldungTitel, "Bitte einen Dispo betrag eingeben!");
+                ok = false;
             }
         }
-        else if (ui->radBtnSpar->isChecked()) {
-            kontoNr = konten->sparkontoAnlegen(startKapital, loggedUser->getUsername(), loggedUser->getId());
-            ui->tableSparkonten->scrollToBottom();
+        else if(ui->radBtnSpar->isChecked()) {  // SPAR
+            ok = true;
+        }
+    }
+    else if(startKapital == 0) {
+        QMessageBox::StandardButton reply = QMessageBox::question(this, "Konto ohne Startkapital anlegen",
+                                                                  "Wollen Sie ein neues Konto <b>ohne Startkapital</b> anlegen?",
+                                                                  QMessageBox::Yes | QMessageBox::No);
+        if(reply == QMessageBox::Yes) {
+            ok = true;
+        }
+        else {
+            ok = false;
+        }
+    }
+    else {    // Startkapital < 0
+        QMessageBox::warning(this, fehlermeldungTitel, "Das Startkapital kann nicht negativ sein!");
+        ok = false;
+    }
+    if (ok) {   // Konto anlegen
+        ;
+        if(ui->radBtnGiro->isChecked()) {   // GIROKonto anlegen
+            angelegtesKontoNr = konten->girokontoAnlegen(startKapital,dispo,loggedUser->getUsername(), loggedUser->getId());
+            ui->sbDispoAnlegen->setValue(0);;
+        }
+        else {  // SPARKonto anlegen
+            angelegtesKontoNr = konten->sparkontoAnlegen(startKapital, loggedUser->getUsername(), loggedUser->getId());
         }
 
-        ui->sbStartKapAnlegen->setValue(0); // TO DO: maybe use enterHomeModus after creating a new account
         kontoAnlegenGuiDeaktivieren();
         kontenAnzeigen();
-        opInHistorieHinzufuegen(kontoNr,"Anlegen",startKapital,startKapital);
-        QMessageBox::information(this, "Konto anlegen", "Konto " + QString::number(kontoNr).insert(QString::number(kontoNr).length()-2, "-").rightJustified(8, '0') + " erfolgreich angelegt!"); // TO DO: create a function for formatting KontoNr (in Model)
-        ui->tabWidgetKonten->setCurrentIndex(0);
-    }
-    else {
-        QMessageBox::warning(this, "Konto anlegen - Fehler", "Bitte Startkapital eingeben");
+        opInHistorieHinzufuegen(konten->kontoHolen(konten->zaehleKonten() -1)->toString(),"Anlegen",startKapital,startKapital);
+
+        QMessageBox::information(this, "Konto anlegen", "Konto " + konten->kontoHolen(konten->zaehleKonten() -1)->toString() + " erfolgreich angelegt!");
     }
 }
-
 
 void FrmMain::on_btn_OkOperation_clicked()
 {
@@ -1045,7 +1055,7 @@ void FrmMain::on_btn_OkOperation_clicked()
             case Einzahlung:
                 QMessageBox::information(this, "Einzahlung - Erfolg", "Die Einzahlung wurde erfolgreich durchgeführt");
                 neuerKontostand = konten->kontostandAendern(betrag, markierteKontoNr);
-                opInHistorieHinzufuegen(markierteKontoNr,"Einzahlung", betrag, neuerKontostand);
+                opInHistorieHinzufuegen(QString::number(markierteKontoNr),"Einzahlung", betrag, neuerKontostand);
                 break;
             case Auszahlung:
                 ok = meldungenBeimAuszahlen(betrag);
@@ -1055,7 +1065,7 @@ void FrmMain::on_btn_OkOperation_clicked()
 
                 if (ok) {
                     neuerKontostand = konten->kontostandAendern(-betrag, markierteKontoNr);
-                    opInHistorieHinzufuegen(markierteKontoNr,"Auszahlung", -betrag, neuerKontostand);
+                    opInHistorieHinzufuegen(QString::number(markierteKontoNr),"Auszahlung", -betrag, neuerKontostand);
                 }
                 break;
             case Ueberweisung:
@@ -1063,8 +1073,8 @@ void FrmMain::on_btn_OkOperation_clicked()
                 if(ok) {
                     double neuerKontostandSender = konten->kontostandAendern(-betrag, markierteKontoNr);
                     double neuerKontostandEmpfpaenger = konten->kontostandAendern(betrag, empfKontoNr);
-                    opInHistorieHinzufuegen(markierteKontoNr,"Überweisung (senden)", -betrag, neuerKontostandSender);
-                    opInHistorieHinzufuegen(empfKontoNr,"Überweisung (empfangen)", betrag, neuerKontostandEmpfpaenger);
+                    opInHistorieHinzufuegen(QString::number(markierteKontoNr),"Überweisung (senden)", -betrag, neuerKontostandSender);
+                    opInHistorieHinzufuegen(QString::number(empfKontoNr),"Überweisung (empfangen)", betrag, neuerKontostandEmpfpaenger);
                 }
                 break;
         }

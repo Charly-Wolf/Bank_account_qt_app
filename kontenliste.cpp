@@ -96,7 +96,7 @@ int KontenListe::girokontoAnlegen(double startKapital, double dispo, QString inh
     if(anzGirokonten > 0) {
         kontoNr = userId * 1000000 + (loggedUserGirokonten[anzGirokonten-1]->getKontoNr() % 1000000) + 100;
     }
-    if(startKapital > 0) { // TO DO : check if this correct
+    if(startKapital >= 0) {
         db->girokontoEintragenInDB(kontoNr, startKapital, dispo, inhaberUsername);
     }
     Girokonto* gk = new Girokonto(kontoNr, startKapital, inhaberUsername ,dispo);
@@ -113,7 +113,7 @@ int KontenListe::sparkontoAnlegen(double startKapital, QString inhaberUsername, 
     if(anzSparkonten > 0) {
         kontoNr = userId * 1000000 + (loggedUserSparkonten[anzSparkonten-1]->getKontoNr() % 1000000) + 100;
     }
-    if(startKapital > 0) {
+    if(startKapital >= 0) {
         db->sparkontoEintragenInDB(kontoNr, startKapital, inhaberUsername);
     }
 
