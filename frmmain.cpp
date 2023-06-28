@@ -251,23 +251,40 @@ void FrmMain::operationModusDeaktivieren()
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableSparkonten->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    fadeOutGuiElement(ui->lblBetrag, 300);
-    fadeOutGuiElement(ui->sboxBetrag, 300);
-    fadeOutGuiElement(ui->lblBetragEuro, 300);
-    fadeOutGuiElement(ui->lblEmpf, 300);
-    fadeOutGuiElement(ui->cBoxEmpfaenger, 300);
-    fadeOutGuiElement(ui->btnAbbrechen, 300);
-    fadeOutGuiElement(ui->btn_OkOperation, 300);
+//    fadeOutGuiElement(ui->lblBetrag, 300);
+    ui->lblBetrag->setVisible(false);
+//    fadeOutGuiElement(ui->sboxBetrag, 300);
+    ui->sboxBetrag->setVisible(false);
+//    fadeOutGuiElement(ui->lblBetragEuro, 300);
+    ui->lblBetragEuro->setVisible(false);
+//    fadeOutGuiElement(ui->lblEmpf, 300);
+    ui->lblEmpf->setVisible(false);
+//    fadeOutGuiElement(ui->cBoxEmpfaenger, 300);
+    ui->cBoxEmpfaenger->setVisible(false);
+//    fadeOutGuiElement(ui->btnAbbrechen, 300);
+    ui->btnAbbrechen->setVisible(false);
+//    fadeOutGuiElement(ui->btn_OkOperation, 300);
+    ui->btn_OkOperation->setVisible(false);
 }
 
 void FrmMain::operationModusAktivieren() //TO DO: maybe use enum opModus as parameter
 {
+    // IN PROGRESS...
+
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
     ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
 
     ui->btnEinzahlung->setEnabled(false);
     ui->btnAuszahlung->setEnabled(false);
     ui->btnUeberw->setEnabled(false);
+
+    ui->lblBetrag->setVisible(true);
+    ui->sboxBetrag->setVisible(true);
+    ui->lblBetragEuro->setVisible(true);
+    ui->btnAbbrechen->setVisible(true);
+    ui->btnAbbrechen->setEnabled(true);
+    ui->btn_OkOperation->setVisible(true);
+    ui->btn_OkOperation->setEnabled(true);
 
     switch (opModus) {
         case Einzahlung:
@@ -277,17 +294,20 @@ void FrmMain::operationModusAktivieren() //TO DO: maybe use enum opModus as para
             ui->btn_OkOperation->setText("✔  Auszahlen");
             break;
         case Ueberweisung:
-            fadeInGuiElement(ui->lblEmpf, 300);
-            fadeInGuiElement(ui->cBoxEmpfaenger, 300);
+//            fadeInGuiElement(ui->lblEmpf, 300);
+//            fadeInGuiElement(ui->cBoxEmpfaenger, 300);
+            ui->lblEmpf->setVisible(true);
+            ui->cBoxEmpfaenger->setVisible(true);
             ui->btn_OkOperation->setText("✔  Überweisen");
             break;
     }
 
-    fadeInGuiElement(ui->lblBetrag, 300);
-    fadeInGuiElement(ui->sboxBetrag, 300);
-    fadeInGuiElement(ui->lblBetragEuro, 300);
-    fadeInGuiElement(ui->btnAbbrechen, 300);
-    fadeInGuiElement(ui->btn_OkOperation, 300);
+    // Commented out because there were problems when trying to enter op modus after creating a new account
+//    fadeInGuiElement(ui->lblBetrag, 300);
+//    fadeInGuiElement(ui->sboxBetrag, 300);
+//    fadeInGuiElement(ui->lblBetragEuro, 300);
+//    fadeInGuiElement(ui->btnAbbrechen, 300);
+//    fadeInGuiElement(ui->btn_OkOperation, 300);
 }
 
 void FrmMain::enterLoginModus()
@@ -499,7 +519,7 @@ void FrmMain::on_btnAbbrechen_clicked()
 void FrmMain::on_btnEinzahlung_clicked()
 {
     opModus = Einzahlung;
-    operationModusAktivieren();//TO DO: maybe directla opModus = Einzahlung as parameter, that way the variable opModus would not be necessary
+    operationModusAktivieren();
 }
 
 

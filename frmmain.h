@@ -30,6 +30,9 @@ private slots:
     void toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, QString pass, QWidget* button); // TO DO: CHECK IF Name of Function is correct (sichtbarkeit oder enabled?)
     void operationModusDeaktivieren();
     void operationModusAktivieren();
+    // IN PROGRESS
+
+
     void enterLoginModus();
     void exitLoginModus();
     void enterHomeModus();
