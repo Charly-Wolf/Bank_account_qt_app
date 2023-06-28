@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>885</height>
+    <height>783</height>
    </rect>
   </property>
   <property name="font">
@@ -1555,7 +1555,7 @@ QGroupBox {border-radius: 9px;}</string>
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
         <property name="maximum">
-         <double>99999.000000000000000</double>
+         <double>999999.000000000000000</double>
         </property>
        </widget>
        <widget class="QLabel" name="lblBetrag">
@@ -1985,7 +1985,7 @@ border-radius: 6px;
       <string notr="true">QTabWidget {border-radius: 9px;}</string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -2517,7 +2517,7 @@ border-radius: 6px;
          </font>
         </property>
         <property name="maximum">
-         <double>9999.000000000000000</double>
+         <double>99999.000000000000000</double>
         </property>
        </widget>
        <widget class="QLabel" name="lblDispoAnlegen">
@@ -2675,7 +2675,7 @@ border-radius: 6px;
          </font>
         </property>
         <property name="maximum">
-         <double>99999.000000000000000</double>
+         <double>999999.000000000000000</double>
         </property>
        </widget>
        <widget class="QLabel" name="label_5">
@@ -2910,9 +2910,9 @@ border: 0.7px solid rgb(99, 99, 99)</string>
    <zorder>lblGeldEmoji</zorder>
    <zorder>btnAusloggen</zorder>
    <zorder>widgetUserVerwalten</zorder>
-   <zorder>widgetHome</zorder>
-   <zorder>widgetNeuerUser</zorder>
    <zorder>widgetLogin</zorder>
+   <zorder>widgetNeuerUser</zorder>
+   <zorder>widgetHome</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

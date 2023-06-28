@@ -26,7 +26,7 @@ class Datenbank
         void sparkontoEintragenInDB(int kontoNr, double startkapital, QString inhaberUsername);
 
         bool letzteAuszahlungAendernInDB(QDate letzteAuszahlung, int KontoNr);
-        bool kontostandAendernInDB(double kontostand, int KontoNr);//TO DO: THIS IS WRONG!! USE EINZAHLEN, AUSZAHLEN, UEBERWEISEN!
+        bool kontostandAendernInDB(double kontostand, int KontoNr); // TO DO: Ein-, Auszahlung und Überweisung Methoden erstellen
 
         QVector<User*> alleUsersHolenAusDB();
 

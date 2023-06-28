@@ -1,17 +1,19 @@
 #include "girokonto.h"
+#include <QDebug>
 
 Girokonto::Girokonto(int kontoNr, double startkapital, QString inhaberusername, double dispo) : Konto(kontoNr, startkapital, inhaberusername)
 {
     this->dispo = dispo;
 }
 
-bool Girokonto::auszahlen(double betrag)
+double Girokonto::auszahlen(double betrag)
 {
-    if((getKontostand() + betrag) >= -dispo) {
-        einzahlen(betrag);
-        return true;
+    qDebug() <<"GIROKONTO.CPP AUSZAHLEN - BETRAG: " << betrag;
+    qDebug() << "AKTUELLER KONTOSTAND: " << getKontostand();
+    if((getKontostand() + betrag) >= dispo) {
+        return einzahlen(-betrag);
         }
-    return false;
+    return getKontostand();
 }
 
 double Girokonto::getDispo()

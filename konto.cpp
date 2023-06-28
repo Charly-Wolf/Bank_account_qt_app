@@ -1,4 +1,5 @@
 #include "konto.h"
+#include <QDebug>
 
 Konto::Konto(int kontoNr, double startkapital, QString inhaberUsername)
 {
@@ -22,9 +23,10 @@ QString Konto::getInhaberUsername()
     return this->inhaberUsername;
 }
 
-void Konto::einzahlen(double betrag)
+double Konto::einzahlen(double betrag)
 {
-    this->kontostand += betrag; //TO DO BUG: Does not work with newly created accounts
+    this->kontostand += betrag;
+    return kontostand;
 }
 
 QString Konto::toString()

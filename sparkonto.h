@@ -11,7 +11,7 @@ class Sparkonto : public Konto
     public:
         Sparkonto(int kontoNr, QString inhaberUsername, double startkapital);
 
-        bool auszahlen(double betrag);
+        double auszahlen(double betrag);
 
         QDate getLetzteAuszahlung();
 

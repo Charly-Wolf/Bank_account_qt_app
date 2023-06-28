@@ -2,16 +2,12 @@
 
 Datenbank::Datenbank(QString dbDatei)
 {
-    qDebug() << "DATEBANK CONSTRUCTOR";
     this->ready = false;
     this->db = (QSqlDatabase::addDatabase("QSQLITE"));
     this->db.setDatabaseName(dbDatei);
     this->ready = db.open();
-    qDebug() << "DB OPEN";
     this->letzterError = db.lastError().text();
-    if(db.lastError().isValid()) qDebug() << "DB ERROR: " << letzterError;
     this->db.close();
-    qDebug() << "DB CLOSE!";
 }
 
 Datenbank::~Datenbank()

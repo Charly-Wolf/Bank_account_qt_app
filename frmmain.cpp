@@ -247,7 +247,7 @@ QString FrmMain::letzteAuszahlungFormatieren(QDate letzteAuszahlung)
 
 void FrmMain::operationModusDeaktivieren()
 {
-    ui->cBoxEmpfaenger->clear();
+//    ui->cBoxEmpfaenger->clear();
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableSparkonten->setSelectionMode(QAbstractItemView::SingleSelection);
 
@@ -269,8 +269,6 @@ void FrmMain::operationModusDeaktivieren()
 
 void FrmMain::operationModusAktivieren() //TO DO: maybe use enum opModus as parameter
 {
-    // IN PROGRESS...
-
     ui->tableGirokonten->setSelectionMode(QAbstractItemView::NoSelection);
     ui->tableSparkonten->setSelectionMode(QAbstractItemView::NoSelection);
 
@@ -301,6 +299,8 @@ void FrmMain::operationModusAktivieren() //TO DO: maybe use enum opModus as para
             ui->btn_OkOperation->setText("✔  Überweisen");
             break;
     }
+
+    ui->sboxBetrag->setFocus();
 
     // Commented out because there were problems when trying to enter op modus after creating a new account
 //    fadeInGuiElement(ui->lblBetrag, 300);
@@ -426,8 +426,8 @@ void FrmMain::empfaengerKontenLaden(int MarkiertesKontoNr)
 
     int anz = konten->zaehleKonten();
     for(int i = 0; i < anz; i++) {
-        if(konten->kontoHolen(i)->getKontoNr() != MarkiertesKontoNr)
-            ui->cBoxEmpfaenger->addItem(konten->kontoHolen(i)->toString() + " -- " + konten->kontoHolen(i)->getInhaberUsername());
+        if(konten->kontoHolenMitIndex(i)->getKontoNr() != MarkiertesKontoNr)
+            ui->cBoxEmpfaenger->addItem(konten->kontoHolenMitIndex(i)->toString() + " -- " + konten->kontoHolenMitIndex(i)->getInhaberUsername());
     }
 }
 
@@ -449,6 +449,7 @@ void FrmMain::kontoAnlegenGuiDeaktivieren()
 void FrmMain::on_tableGirokonten_itemSelectionChanged()
 {
     int index = ui->tableGirokonten->currentRow();
+    ui->tableGirokonten->setFocus(); // BUG: if I add this to both functions, it wont work :( So I left it only for this one
     markierteGirokonto = konten->girokontoHolen(index);
     markierteKontoNr = markierteGirokonto->getKontoNr();
 
@@ -510,10 +511,15 @@ void FrmMain::on_btnAbbrechen_clicked()
     operationModusDeaktivieren();
     ui->btnEinzahlung->setEnabled(true);
     ui->btnAuszahlung->setEnabled(true);
-    ui->btnUeberw->setEnabled(true); //TO DO: see if necessary-> it is already in empfKontenLaden method
+    ui->btnUeberw->setEnabled(true);
 //    ui->lblMarkiertesKonto->setText("Markieren Sie ein Konto \naus der Konten-Tabellen");
 //    ui->lblMarkKontostand->setVisible(false);
 //    ui->lblMarkKontostandTitel->setVisible(false);
+    if(markierteKontoNr % 100 == 01) {
+        ui->tableGirokonten->setFocus();
+    } else if (markierteKontoNr % 100 == 99) {
+        ui->tableSparkonten->setFocus();
+    }
 }
 
 void FrmMain::on_btnEinzahlung_clicked()
@@ -919,7 +925,7 @@ bool FrmMain::erfolgMeldungBeimAuszahlen(bool reply) // TO DO: Maybe I dont need
     return false;
 }
 
-bool FrmMain::setTabellenWidth()
+void FrmMain::setTabellenWidth()
 {
     ui->tableGirokonten->setColumnWidth(0, 120);
     ui->tableGirokonten->setColumnWidth(1, 115);
@@ -950,23 +956,8 @@ void FrmMain::on_tabWidgetKonten_currentChanged(int index)
             ui->tabWidgetKonten->setFixedWidth(1001);
         }
         if(!ui->tabWidgetOperationen->isEnabled()) {
-//             QMessageBox::StandardButton reply = QMessageBox::question(this, "Konto anlegen", "Wollen Sie kein Konto anlegen?", QMessageBox::Yes | QMessageBox::No);
-//             if (reply == QMessageBox::Yes) {
-                 fadeInGuiElement(ui->tabWidgetOperationen, 300);
-                 fadeOutGuiElement(ui->tabWidgetKontotypInfos,300);
-
-////                  TO DO: use konto anlegen deactivieren
-//                 ui->sbStartKapAnlegen->setValue(0);
-//                 ui->sbDispoAnlegen->setValue(0);
-//                 ui->radBtnKeinKonto->setChecked(true);
-//                 ui->sbDispoAnlegen->setEnabled(false);
-//                 ui->sbStartKapAnlegen->setEnabled(false);
-//                 ui->sbDispoAnlegen->setVisible(false);
-//                 ui->lblDispoAnlegen->setVisible(false);
-//                 ui->lblBetragEuroDispoKontoAnlegen->setVisible(false);
-//             } else {
-//                 ui->tabWidgetKonten->setCurrentIndex(2);
-//             }
+             fadeInGuiElement(ui->tabWidgetOperationen, 300);
+             fadeOutGuiElement(ui->tabWidgetKontotypInfos,300);
         }
     }
 }
@@ -1057,9 +1048,9 @@ void FrmMain::on_btn_OkKontoAnlegen_clicked()
 
         kontoAnlegenGuiDeaktivieren();
         kontenAnzeigen();
-        opInHistorieHinzufuegen(konten->kontoHolen(konten->zaehleKonten() -1)->toString(),"Anlegen",startKapital,startKapital);
+        opInHistorieHinzufuegen(konten->kontoHolenMitIndex(konten->zaehleKonten() -1)->toString(),"Anlegen",startKapital,startKapital);
 
-        QMessageBox::information(this, "Konto anlegen", "Konto " + konten->kontoHolen(konten->zaehleKonten() -1)->toString() + " erfolgreich angelegt!");
+        QMessageBox::information(this, "Konto anlegen", "Konto " + konten->kontoHolenMitIndex(konten->zaehleKonten() -1)->toString() + " erfolgreich angelegt!");
     }
 }
 
@@ -1074,7 +1065,8 @@ void FrmMain::on_btn_OkOperation_clicked()
         switch (opModus) {
             case Einzahlung:
                 QMessageBox::information(this, "Einzahlung - Erfolg", "Die Einzahlung wurde erfolgreich durchgeführt");
-                neuerKontostand = konten->kontostandAendern(betrag, markierteKontoNr);
+//                neuerKontostand = konten->kontostandAendern(betrag, markierteKontoNr);
+                neuerKontostand = konten->einzahlen(markierteKontoNr, betrag);
                 opInHistorieHinzufuegen(QString::number(markierteKontoNr),"Einzahlung", betrag, neuerKontostand);
                 break;
             case Auszahlung:
@@ -1084,15 +1076,18 @@ void FrmMain::on_btn_OkOperation_clicked()
                 qDebug() << betrag;
 
                 if (ok) {
-                    neuerKontostand = konten->kontostandAendern(-betrag, markierteKontoNr);
+//                    neuerKontostand = konten->kontostandAendern(-betrag, markierteKontoNr);
+                    neuerKontostand = konten->auszahlen(markierteKontoNr, betrag);
                     opInHistorieHinzufuegen(QString::number(markierteKontoNr),"Auszahlung", -betrag, neuerKontostand);
                 }
                 break;
             case Ueberweisung:
                 ok = meldungenBeimAuszahlen(betrag);
                 if(ok) {
-                    double neuerKontostandSender = konten->kontostandAendern(-betrag, markierteKontoNr);
-                    double neuerKontostandEmpfpaenger = konten->kontostandAendern(betrag, empfKontoNr);
+//                    double neuerKontostandSender = konten->kontostandAendern(-betrag, markierteKontoNr);
+                    double neuerKontostandSender = konten->auszahlen(markierteKontoNr, betrag);
+
+                    double neuerKontostandEmpfpaenger = konten->einzahlen(empfKontoNr, betrag);
                     opInHistorieHinzufuegen(QString::number(markierteKontoNr),"Überweisung (senden)", -betrag, neuerKontostandSender);
                     opInHistorieHinzufuegen(QString::number(empfKontoNr),"Überweisung (empfangen)", betrag, neuerKontostandEmpfpaenger);
                 }

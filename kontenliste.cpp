@@ -59,7 +59,7 @@ int KontenListe::zaehleSparkonten()
     return loggedUserSparkonten.size();
 }
 
-Konto *KontenListe::kontoHolen(int index)
+Konto *KontenListe::kontoHolenMitIndex(int index)
 {
     Konto* tmpKonto = NULL;
     if (index < this->zaehleKonten() && index >=0)
@@ -67,6 +67,17 @@ Konto *KontenListe::kontoHolen(int index)
         tmpKonto =  this->alleKonten[index];
     }
     return tmpKonto;
+}
+
+Konto *KontenListe::kontoHolenMitKontoNr(int kontoNr)
+{
+    Konto* k = nullptr;
+    for(Konto* k : alleKonten) {
+        if(k->getKontoNr() == kontoNr) {
+             return alleKonten[alleKonten.indexOf(k)];
+        }
+    }
+    return k;
 }
 
 Girokonto *KontenListe::girokontoHolen(int index)
@@ -139,26 +150,18 @@ bool KontenListe::setLetzteAuszahlung(QDate letzteAuszahlung, int KontoNr)
     return false;
 }
 
-double KontenListe::kontostandAendern(double betrag, int KontoNr)
+double KontenListe::einzahlen(int kontoNr, double betrag)
 {
-    double kontostand = 0;
-    int anz = zaehleKonten();
-    for(int i = 0; i < anz; i++) {
-        if(alleKonten[i]->getKontoNr() == KontoNr)
-        {
-            if(betrag < 0) {
-                if(alleKonten[i]->getKontoNr()) { // SPARKONTO
-                    alleKonten[i]->auszahlen(betrag); // TO DO: HANDLE THIS so there is a QMessageBox in case of problems
-                   setLetzteAuszahlung(QDate::currentDate(),KontoNr);// TO DO: not necessary to repeat auszahel method, I can use sparkontoletzteauszahlungaender after with an if
-                } else if(alleKonten[i]->getKontoNr() % 100 == 01) { // GIROKONTO
-                   alleKonten[i]->auszahlen(betrag); // TO DO: HANDLE THIS so there is a QMessageBox in case of problems
-                }
-            } else alleKonten[i]->einzahlen(betrag);
-            kontostand = alleKonten[i]->getKontostand();
-        }
-    }
-    db->kontostandAendernInDB(kontostand, KontoNr);
-    return kontostand;
+    double neuerKontostand = kontoHolenMitKontoNr(kontoNr)->einzahlen(betrag);
+    db->kontostandAendernInDB(neuerKontostand, kontoNr);
+    return neuerKontostand;
+}
+
+double KontenListe::auszahlen(int kontoNr, double betrag)
+{
+    double neuerKontostand = kontoHolenMitKontoNr(kontoNr)->auszahlen(betrag);
+    db->kontostandAendernInDB(neuerKontostand, kontoNr);
+    return neuerKontostand;
 }
 
 double KontenListe::getGesamtKontenstand()
@@ -194,16 +197,16 @@ bool KontenListe::csvExportieren(QString filePath, QString username)
         int anz = this->zaehleKonten();
 
         for (int i = 0; i < anz; i++) {
-            if(this->kontoHolen(i)->getInhaberUsername() == username) {
+            if(this->kontoHolenMitIndex(i)->getInhaberUsername() == username) {
 //            if((dynamic_cast<Girokonto*>(this->kontoHolen(i)) != nullptr)) { // Check Datentyp
-                if(this->kontoHolen(i)->getKontoNr() % 100 == 01) { // GIROKONTO
-                    stream << this->kontoHolen(i)->getKontoNr() << ", " << this->kontoHolen(i)->getKontostand() << ", Girokonto, "
-                    << dynamic_cast<Girokonto*>(this->kontoHolen(i))->getDispo() << ", -" << endl; // Cast into Girokonto
+                if(this->kontoHolenMitIndex(i)->getKontoNr() % 100 == 01) { // GIROKONTO
+                    stream << this->kontoHolenMitIndex(i)->getKontoNr() << ", " << this->kontoHolenMitIndex(i)->getKontostand() << ", Girokonto, "
+                    << dynamic_cast<Girokonto*>(this->kontoHolenMitIndex(i))->getDispo() << ", -" << endl; // Cast into Girokonto
                 } // if Girokonto
 //            else if((dynamic_cast<Sparkonto*>(this->kontoHolen(i)) != nullptr)){ // Check Datentyp
-                else if(this->kontoHolen(i)->getKontoNr() % 100 == 99) { // SPARKONTO
-                    stream << this->kontoHolen(i)->getKontoNr() << ", " << this->kontoHolen(i)->getKontostand() << ", Sparkonto, -" << ", "
-                    << dynamic_cast<Sparkonto*>(this->kontoHolen(i))->getLetzteAuszahlung().toString("dd-MM-yyyy")  << endl; // Cast into Sparkonto
+                else if(this->kontoHolenMitIndex(i)->getKontoNr() % 100 == 99) { // SPARKONTO
+                    stream << this->kontoHolenMitIndex(i)->getKontoNr() << ", " << this->kontoHolenMitIndex(i)->getKontostand() << ", Sparkonto, -" << ", "
+                    << dynamic_cast<Sparkonto*>(this->kontoHolenMitIndex(i))->getLetzteAuszahlung().toString("dd-MM-yyyy")  << endl; // Cast into Sparkonto
                 } // else if Sparkonto
             } // if: nur Konten vom eingeloggten User
         } // for

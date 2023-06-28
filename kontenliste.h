@@ -32,7 +32,8 @@ class KontenListe
         int zaehleGirokonten();
         int zaehleSparkonten();
 
-        Konto* kontoHolen(int index);
+        Konto* kontoHolenMitIndex(int index);
+        Konto* kontoHolenMitKontoNr(int kontoNr);
         Girokonto* girokontoHolen(int index);
         Sparkonto* sparkontoHolen(int index);
 
@@ -41,8 +42,8 @@ class KontenListe
 
         bool setLetzteAuszahlung(QDate letzteAuszahlung, int KontoNr);
 
-        //TO DO: !!!!!!!!!!!!!!!!!!!!!!!!DO NOT USE KONTOSTAND ÄNDERN!! MAKE TWO METHODS: EINZAHLEN, AUSZAHLEN, (MAYBE ALSO UEBERWEISEN)
-        double kontostandAendern(double betrag, int KontoNr);//Rückgabewert = neuer Kontostand
+        double einzahlen(int kontoNr, double betrag);
+        double auszahlen(int kontoNr, double betrag);
 
         double getGesamtKontenstand();
         double getGesamtGirokontenstand();

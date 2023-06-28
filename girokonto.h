@@ -10,7 +10,7 @@ class Girokonto : public Konto
     public:
         Girokonto(int kontoNr, double startkapital, QString inhaberUsername, double dispo);
 
-        bool auszahlen(double betrag);
+        double auszahlen(double betrag);
 
         double getDispo();
 //        QString toString();

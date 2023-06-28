@@ -30,9 +30,6 @@ private slots:
     void toggleSichtbarkeitWennUsernameOderPassNotEmpty(QString username, QString pass, QWidget* button); // TO DO: CHECK IF Name of Function is correct (sichtbarkeit oder enabled?)
     void operationModusDeaktivieren();
     void operationModusAktivieren();
-    // IN PROGRESS
-
-
     void enterLoginModus();
     void exitLoginModus();
     void enterHomeModus();
@@ -51,7 +48,7 @@ private slots:
     void opInHistorieHinzufuegen(QString kontoNrString, QString operation, double betrag, double kontostand);
     bool meldungenBeimAuszahlen(double betrag);
     bool erfolgMeldungBeimAuszahlen(bool reply);
-    bool setTabellenWidth();
+    void setTabellenWidth();
 
     // Animationen
     void fadeInGuiElement(QWidget* qWidget, double duration);
@@ -80,10 +77,12 @@ private slots:
     void on_btnCsvExport_clicked();
     void on_btn_OkOperation_clicked();
 
-    // Values-changed Event handlers
-    void on_tabWidgetOperationen_currentChanged(int index);
+    // QWidgetTable row selected changed Event Hanlders
     void on_tableGirokonten_itemSelectionChanged();
     void on_tableSparkonten_itemSelectionChanged();
+
+    // Values-changed Event handlers
+    void on_tabWidgetOperationen_currentChanged(int index); 
     void on_lePassAnlegen_textChanged(const QString &arg1);
     void on_lePass_textChanged(const QString &arg1);
     void on_leUserName_textChanged(const QString &arg1);
@@ -109,8 +108,6 @@ private:
     User* loggedUser;
 
     int empfKontoNr; // TO DO: DO I NEED IT AS GLOBAL VARIABLE?
-
-    QWidget* activeWidget; // TO DO: USE IT OR DELETE IT, bcs for now it does not serve any clear purpose, it is halfway used
 
     enum opModus {
         Einzahlung,

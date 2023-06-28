@@ -16,8 +16,8 @@ class Konto
         double getKontostand();
         QString getInhaberUsername();
 
-        void einzahlen(double betrag);
-        virtual bool auszahlen(double betrag) = 0;
+        double einzahlen(double betrag);
+        virtual double auszahlen(double betrag) = 0;
 
         QString toString();
 };

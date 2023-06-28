@@ -52,3 +52,4 @@ void User::setId(int id)
 {
     this->id = id;
 }
+

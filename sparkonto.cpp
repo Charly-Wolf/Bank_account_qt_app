@@ -4,17 +4,16 @@ Sparkonto::Sparkonto(int kontoNr, QString inhaberUsername, double startkapital) 
 {
 }
 
-bool Sparkonto::auszahlen(double betrag)
+double Sparkonto::auszahlen(double betrag)
 {
     QDate heute = QDate::currentDate();
     if(this->letzteAuszahlung < heute) {
         if((getKontostand()+betrag) >= 0) {
-            einzahlen(betrag);
             setLetzteAuszahlug(QDate::currentDate());
-            return true;
+            return einzahlen(-betrag);
         }
     }
-    return false; //TO DO Handle case when trying to withdraw more money than the balance for sparkonten -> QMessageBox
+    return getKontostand();
 }
 
 QDate Sparkonto::getLetzteAuszahlung()
